@@ -5,7 +5,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import { TouchableOpacity } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
-import DetailsScreen from '../screens/DetailsScreen';
+import DetailsScreen from '../screens/MemberRegistrationScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegistrationScreen from '../screens/RegistrationScreen';
@@ -13,6 +13,7 @@ import Index from '../screens/Index';
 import DonationScreen from '../screens/DonationScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import ChatScreen from '../screens/ChatScreen';
+import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -37,9 +38,9 @@ const DashboardStackNavigator = ({ navigation }) => (
       options={getScreenOptions(navigation, 'Home')} 
     />
     <Stack.Screen 
-      name="Details" 
-      component={DetailsScreen} 
-      options={{ title: 'Details' }} 
+      name="MemberRegistration" 
+      component={MemberRegistrationScreen} 
+      options={{ title: 'Member Registration' }} 
     />
   </Stack.Navigator>
 );
