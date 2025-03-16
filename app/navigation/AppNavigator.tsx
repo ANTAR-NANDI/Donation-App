@@ -9,7 +9,9 @@ import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegistrationScreen from '../screens/RegistrationScreen';
 import Index from '../screens/Index';
-
+import NotificationScreen from '../screens/NotificationScreen';
+import DonationScreen from '../screens/DonationScreen';
+import BookmarkScreen from '../screens/BookmarkScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -17,11 +19,35 @@ const Tab = createBottomTabNavigator();
 const TabNavigator = () => (
   <Tab.Navigator>
     <Tab.Screen
-      name="Home"
+      name="Dashboard"
       component={HomeScreen}
-      options={{ headerShown: false }}
     />
-    <Tab.Screen name="Profile" component={ProfileScreen} />
+
+      {/* Bookmarks Tab */}
+      <Tab.Screen
+        name="bookmark"
+        component={BookmarkScreen}
+         options={{ headerShown: false }}
+      />
+       {/* Create Tab */}
+      <Tab.Screen
+        name="donation"
+        component={DonationScreen}
+         options={{ headerShown: false }}
+      />
+
+      {/* Notifications Tab */}
+      <Tab.Screen
+        name="notifications" component={NotificationScreen}
+         options={{ headerShown: false }}
+        
+      />
+      {/* Profile Tab */}
+      <Tab.Screen
+        name="profile"
+        component={ProfileScreen}
+         options={{ headerShown: false }}
+      />
   </Tab.Navigator>
 );
 
@@ -35,7 +61,8 @@ const RootStackNavigator = () => {
       {/* Authentication screens */}
       <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
       {/* Main app screens (TabView) */}
-      <Stack.Screen name="App" component={TabNavigator} />
+      <Stack.Screen name="App" component={TabNavigator}  options={{ headerShown: false }}/>
+      
     </Stack.Navigator>
   );
 };
