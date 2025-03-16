@@ -1,7 +1,7 @@
-import React,{useState} from 'react';
+import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
-
+import { Ionicons } from '@expo/vector-icons';
 import HomeScreen from '../screens/HomeScreen';
 import DetailsScreen from '../screens/DetailsScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -43,31 +43,56 @@ const TabNavigator = () => (
     <Tab.Screen
       name="Dashboard"
       component={DashboardStackNavigator}
-      options={{ headerShown: false }}  // Tab bar will be shown when this tab is active
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="home-outline" size={size} color={color} />
+        ),
+      }}
     />
     {/* Bookmarks Tab */}
     <Tab.Screen
-      name="bookmark"
+      name="Bookmark"
       component={BookmarkScreen}
-      options={{ headerShown: false }}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="chatbubbles-outline" size={size} color={color} />
+        ),
+      }}
     />
-    {/* Create Tab */}
+    {/* Donation Tab */}
     <Tab.Screen
-      name="donation"
+      name="Donation"
       component={DonationScreen}
-      options={{ headerShown: false }}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="heart-outline" size={size} color={color} />
+        ),
+      }}
     />
     {/* Notifications Tab */}
     <Tab.Screen
-      name="notifications"
+      name="Notifications"
       component={NotificationScreen}
-      options={{ headerShown: false }}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="notifications-outline" size={size} color={color} />
+        ),
+      }}
     />
     {/* Profile Tab */}
     <Tab.Screen
-      name="profile"
+      name="Profile"
       component={ProfileScreen}
-      options={{ headerShown: false }}
+      options={{
+        headerShown: false,
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="person-outline" size={size} color={color} />
+        ),
+      }}
     />
   </Tab.Navigator>
 );
@@ -77,7 +102,7 @@ const RootStackNavigator = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
-    <Stack.Navigator initialRouteName={isAuthenticated ? "App" : "Auth"}>
+    <Stack.Navigator initialRouteName={isAuthenticated ? 'App' : 'Auth'}>
       {/* Authentication screens */}
       <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
       {/* Main app screens (TabView) */}
