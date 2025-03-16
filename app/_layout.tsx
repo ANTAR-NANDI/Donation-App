@@ -1,8 +1,9 @@
+// _layout.tsx
 import React from 'react';
-import AppNavigator from './navigation/AppNavigator';
+import RootStackNavigator from './navigation/AppNavigator';
 
 const Layout = () => {
-  return <AppNavigator />;
+  return <RootStackNavigator />;
 };
 
 export default Layout;
