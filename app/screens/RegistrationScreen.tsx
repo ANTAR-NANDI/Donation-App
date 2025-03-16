@@ -99,7 +99,7 @@ const RegistrationScreen = ({ navigation }: any) => {
       <Text style={styles.label}>Password *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder="Password"   
         placeholderTextColor="#4D2600"
         value={password}
         onChangeText={setPassword}
