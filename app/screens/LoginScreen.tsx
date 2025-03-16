@@ -5,8 +5,8 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const LoginScreen = ({ navigation }: any) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('antar@gmail.com');
+  const [password, setPassword] = useState('111');
   // const handleLogin = () => {
   //   // Here, add your login logic (API call, Firebase, etc.)
     
