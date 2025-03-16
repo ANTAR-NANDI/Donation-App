@@ -93,10 +93,61 @@ const TabNavigator = ({ navigation }) => (
 
 // Drawer Navigator
 const DrawerNavigator = () => (
-  <Drawer.Navigator >
-    <Drawer.Screen name="Home" component={TabNavigator} options={{ headerShown: false }} />
-    <Drawer.Screen name="Profile" component={ProfileScreen} />
-    <Drawer.Screen name="Chat" component={ChatScreen} />
+ <Drawer.Navigator>
+    {/* Dashboard Tab */}
+    <Drawer.Screen 
+      name="Dashboard" 
+      component={TabNavigator} 
+      options={{
+        headerShown: false,
+        drawerIcon: () => <Ionicons name="home-outline" size={24} color="black" />,
+      }} 
+    />
+    
+    {/* Profile Screen */}
+    <Drawer.Screen 
+      name="Profile" 
+      component={ProfileScreen} 
+      options={{
+        drawerIcon: () => <Ionicons name="person-outline" size={24} color="black" />,
+      }} 
+    />
+    
+    {/* Chat Screen */}
+    <Drawer.Screen 
+      name="Chat" 
+      component={ChatScreen} 
+      options={{
+        drawerIcon: () => <Ionicons name="chatbubbles-outline" size={24} color="black" />,
+      }} 
+    />
+    
+    {/* News Screen */}
+    <Drawer.Screen 
+      name="News" 
+      component={NotificationScreen} 
+      options={{
+        drawerIcon: () => <Ionicons name="notifications-outline" size={24} color="black" />,
+      }} 
+    />
+    
+    {/* Donation Screen */}
+    <Drawer.Screen 
+      name="Donation" 
+      component={DonationScreen} 
+      options={{
+        drawerIcon: () => <Ionicons name="heart-outline" size={24} color="black" />,
+      }} 
+    />
+    
+    {/* Logout Screen */}
+    <Drawer.Screen 
+      name="Logout" 
+      component={DonationScreen} 
+      options={{
+        drawerIcon: () => <Ionicons name="log-out-outline" size={24} color="black" />,
+      }} 
+    />
   </Drawer.Navigator>
 );
 
