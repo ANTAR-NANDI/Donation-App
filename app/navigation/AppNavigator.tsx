@@ -8,9 +8,10 @@ import ProfileScreen from '../screens/ProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegistrationScreen from '../screens/RegistrationScreen';
 import Index from '../screens/Index';
-import NotificationScreen from '../screens/NotificationScreen';
 import DonationScreen from '../screens/DonationScreen';
-import BookmarkScreen from '../screens/BookmarkScreen';
+import BookmarkScreen from '../screens/ChatScreen';
+import NotificationScreen from '../screens/NotificationScreen';
+import ChatScreen from '../screens/ChatScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -52,10 +53,10 @@ const TabNavigator = () => (
     />
     {/* Bookmarks Tab */}
     <Tab.Screen
-      name="Bookmark"
-      component={BookmarkScreen}
+      name="Chat"
+      component={ChatScreen}
       options={{
-        headerShown: false,
+        headerShown: true,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="chatbubbles-outline" size={size} color={color} />
         ),
@@ -66,7 +67,7 @@ const TabNavigator = () => (
       name="Donation"
       component={DonationScreen}
       options={{
-        headerShown: false,
+        headerShown: true,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="heart-outline" size={size} color={color} />
         ),
@@ -77,7 +78,7 @@ const TabNavigator = () => (
       name="Notifications"
       component={NotificationScreen}
       options={{
-        headerShown: false,
+        headerShown: true,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="notifications-outline" size={size} color={color} />
         ),
@@ -88,7 +89,7 @@ const TabNavigator = () => (
       name="Profile"
       component={ProfileScreen}
       options={{
-        headerShown: false,
+        headerShown: true,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="person-outline" size={size} color={color} />
         ),
