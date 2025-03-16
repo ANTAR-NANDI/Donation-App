@@ -43,10 +43,32 @@ const RootStackNavigator = () => {
 // Auth Stack Navigator (Login & Registration flow)
 const AuthStack = () => (
   <Stack.Navigator initialRouteName="Index">
-    <Stack.Screen name="Index" component={Index} options={{ 
-        title: 'Home',  // Change the title that will appear in the header  // Optionally hide the header if you don't want it
-      }}  />
-    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen
+  name="Index"
+  component={Index}
+  options={{
+    title: 'Home',  // Title that appears in the header
+    headerStyle: {
+      backgroundColor: '#626868', // Set the header background color (for example, Tomato red)
+    },
+    headerTintColor: '#fff', // Set the color of the title text
+    headerTitleStyle: {
+      fontWeight: 'bold', // Optional: to make the title bold
+    },
+  }}
+/>
+    <Stack.Screen name="Login" component={LoginScreen}
+    options={{
+    title: 'Login ',  // Title that appears in the header
+    headerStyle: {
+      backgroundColor: '#626868', // Set the header background color (for example, Tomato red)
+    },
+    headerTintColor: '#fff', // Set the color of the title text
+    headerTitleStyle: {
+      fontWeight: 'bold', // Optional: to make the title bold
+    },
+  }}
+    />
     <Stack.Screen name="Register" component={RegistrationScreen} />
   </Stack.Navigator>
 );
