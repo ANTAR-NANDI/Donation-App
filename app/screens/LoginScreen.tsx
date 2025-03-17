@@ -5,8 +5,8 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 const LoginScreen = ({ navigation }: any) => {
-  const [email, setEmail] = useState('antar@gmail.com');
-  const [password, setPassword] = useState('111');
+  const [email, setEmail] = useState('a@gmail.com');
+  const [password, setPassword] = useState('12345678');
   // const handleLogin = () => {
   //   // Here, add your login logic (API call, Firebase, etc.)
     
@@ -32,14 +32,14 @@ const LoginScreen = ({ navigation }: any) => {
     if (!validateForm()) return;
 
     try {
-      // const response = await axios.post('http://192.168.0.174:8000/api/login', {
-      //   email,
-      //   password,
-      // });
-      // const { token, user } = response.data;
-      // await AsyncStorage.setItem('@auth_token', token);
-      // await AsyncStorage.setItem('@user', JSON.stringify(user.id));
-      // Toast.show({ type: 'success', text1: 'Successful', text2: 'Login Successfully !' });
+      const response = await axios.post('http://192.168.0.174:8000/api/login', {
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+      await AsyncStorage.setItem('@auth_token', token);
+      await AsyncStorage.setItem('@user', JSON.stringify(user.id));
+      Toast.show({ type: 'success', text1: 'Successful', text2: 'Login Successfully !' });
       navigation.replace('App');
     } catch (error) {
       Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response?.data?.error || 'An error occurred' });
