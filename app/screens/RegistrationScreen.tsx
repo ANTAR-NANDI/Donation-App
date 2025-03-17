@@ -4,16 +4,16 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import * as SecureStore from 'expo-secure-store';
 const RegistrationScreen = ({ navigation }: any) => {
    const [userToken, setUserToken] = useState('');
   const router = useRouter();
   // State to store form inputs
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('a');
+  const [email, setEmail] = useState('a@gmail.com');
+  const [phone, setPhone] = useState('01824506162');
+  const [password, setPassword] = useState('12345678');
+  const [confirmPassword, setConfirmPassword] = useState('12345678');
 
 
   const validateForm = () => {
@@ -25,8 +25,8 @@ const RegistrationScreen = ({ navigation }: any) => {
       Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter a valid email address.' });
       return false;
     }
-    if (!phone.trim() || !/^\d{10}$/.test(phone)) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter a valid 10-digit phone number.' });
+    if (!phone.trim() || !/^\d{11}$/.test(phone)) {
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter a valid 11-digit phone number.' });
       return false;
     }
     if (!password.trim() || password.length < 6) {
@@ -39,7 +39,7 @@ const RegistrationScreen = ({ navigation }: any) => {
     }
     return true;
   };
-  // Handle registration logic
+
   const handleRegister = async () => {
         if (!validateForm()) return
 
@@ -54,8 +54,6 @@ const RegistrationScreen = ({ navigation }: any) => {
             console.log(response);
             await AsyncStorage.setItem('@auth_token', response.data.token);
             await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
-            console.log(await AsyncStorage.getItem('@auth_token'));
-
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Registered Successfully !' });
               navigation.replace('App');
           } catch (error) {

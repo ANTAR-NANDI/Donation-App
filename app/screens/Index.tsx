@@ -4,17 +4,6 @@ import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
 
 const Index = ({ navigation }: any) => {
   return (
-    // <View
-    //   style={{
-    //     flex: 1,
-    //     justifyContent: 'center',
-    //     alignItems: 'center',
-    //   }}
-    // >
-    //   <Text>Welcome to the App</Text>
-    //   <Button title="Login" onPress={() => navigation.navigate('Login')} />
-    //   <Button title="Register" onPress={() => navigation.navigate('Register')} />
-    // </View>
     <View style={styles.container}>
       <Image source={require('../../assets/images/topoban.png')} style={styles.logo} />
       <Text style={styles.welcomeText}>Welcome To</Text>
