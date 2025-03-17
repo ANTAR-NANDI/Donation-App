@@ -4,7 +4,6 @@ import {
 } from "react-native";
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
-import * as ImagePicker from "react-native-image-picker";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const MemberRegistrationForm = () => {
@@ -118,20 +117,6 @@ const MemberRegistrationForm = () => {
       formData.append('permanent_address', permanent_address);
       formData.append('id', await AsyncStorage.getItem('@user'));
 
-      // If an image is selected, append it to the form data
-      if (image) {
-        const imageUri = image;
-        const filename = imageUri.split('/').pop();
-        const type = 'image/jpeg';  // Or get the mime type based on the image format
-
-        formData.append('image', {
-          uri: imageUri,
-          type,
-          name: filename,
-        });
-      }
-      console.log(formData)
-
       // Send form data with the image
       const response = await axios.post('http://192.168.0.174:8000/api/update_profile', formData, {
         headers: {
@@ -144,25 +129,6 @@ const MemberRegistrationForm = () => {
     } catch (error) {
       Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response?.data?.error || error.message });
     }
-  };
-
-  // Function to pick an image
-  const handleImagePick = () => {
-    const options = {
-      mediaType: "photo",
-      quality: 1,
-      includeBase64: false,
-    };
-
-    ImagePicker.launchImageLibrary(options, (response) => {
-      if (response.didCancel) {
-        console.log("User cancelled image picker");
-      } else if (response.error) {
-        console.log("Image picker error: ", response.error);
-      } else {
-        setImage(response.assets[0].uri);  // Set the selected image URI
-      }
-    });
   };
 
   return (
@@ -179,13 +145,6 @@ const MemberRegistrationForm = () => {
       <TextInput style={styles.input} placeholder="Nationality" value={nationality} onChangeText={setNationality} />
       <TextInput style={styles.input} placeholder="Date of Birth (YYYY-MM-DD)" value={date_of_birth} onChangeText={setDateOfBirth} />
       <TextInput style={styles.input} placeholder="Blood Group" value={blood} onChangeText={setBlood} />
-      <TouchableOpacity style={styles.imagePicker} onPress={handleImagePick}>
-        {image ? (
-          <Image source={{ uri: image }} style={styles.image} />
-        ) : (
-          <Text style={styles.imageText}>Select Image</Text>
-        )}
-      </TouchableOpacity>
       <TextInput style={styles.input} placeholder="Present Address" value={present_address} onChangeText={setPresentAddress} />
       <TextInput style={styles.input} placeholder="Permanent Address" value={permanent_address} onChangeText={setPermanentAddress} />
 
