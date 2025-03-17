@@ -1,26 +1,8 @@
 // Index.tsx
-import React,{useEffect} from 'react';
+import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+
 const Index = ({ navigation }: any) => {
-  useEffect(() => {
-      const checkAuth = async () => {
-        try {
-          const token = await AsyncStorage.getItem("@auth_token");
-          if (token) {
-            navigation.replace("App"); // Navigate to Dashboard
-          } else {
-            navigation.replace("Auth"); // Navigate to Login
-          }
-        } catch (error) {
-          console.error("Error checking authentication:", error);
-          navigation.replace("Login"); // Fallback to Login
-        }
-      };
-  
-      checkAuth();
-    }, []);
-  
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/topoban.png')} style={styles.logo} />
