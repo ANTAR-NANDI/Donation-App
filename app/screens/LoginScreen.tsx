@@ -7,23 +7,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const LoginScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState('antar@gmail.com');
   const [password, setPassword] = useState('111');
-  useEffect(() => {
-      const checkAuth = async () => {
-        try {
-          const token = await AsyncStorage.getItem("@auth_token");
-          if (token) {
-            navigation.replace("App"); // Navigate to Dashboard
-          } else {
-            navigation.replace("Auth"); // Navigate to Login
-          }
-        } catch (error) {
-          console.error("Error checking authentication:", error);
-          navigation.replace("Login"); // Fallback to Login
-        }
-      };
-  
-      checkAuth();
-    }, []);
+  // const handleLogin = () => {
+  //   // Here, add your login logic (API call, Firebase, etc.)
+    
+  //   // After successful login, navigate to the main app's TabNavigator
+  //   navigation.replace('App');  // This will replace the login screen with the TabNavigator
+  // };
+
   const validateForm = () => {
     if (!email.trim() || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
       Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter a valid email address.' });

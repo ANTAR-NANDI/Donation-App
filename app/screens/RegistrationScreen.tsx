@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link, Redirect,useRouter } from 'expo-router';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import axios from 'axios';
@@ -14,23 +14,6 @@ const RegistrationScreen = ({ navigation }: any) => {
   const [password, setPassword] = useState('12345678');
   const [confirmPassword, setConfirmPassword] = useState('12345678');
 
-  useEffect(() => {
-      const checkAuth = async () => {
-        try {
-          const token = await AsyncStorage.getItem("@auth_token");
-          if (token) {
-            navigation.replace("App"); // Navigate to Dashboard
-          } else {
-            navigation.replace("Auth"); // Navigate to Login
-          }
-        } catch (error) {
-          console.error("Error checking authentication:", error);
-          navigation.replace("Login"); // Fallback to Login
-        }
-      };
-  
-      checkAuth();
-    }, []);
 
   const validateForm = () => {
     if (!name.trim()) {
