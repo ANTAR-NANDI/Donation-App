@@ -1,120 +1,168 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, FlatList, KeyboardAvoidingView, Platform } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, ScrollView, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Toast from 'react-native-toast-message';
+const ChatScreen = ({ navigation }) => {
+    const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [messageInput, setMessageInput] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(1); // Assuming user ID is 1
 
-const ChatView = () => {
-  const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState([
-    { id: '1', text: 'Hello, how are you?', sender: 'received' },
-    { id: '2', text: 'I am doing great, thanks!', sender: 'sent' },
-    { id: '3', text: 'What about you?', sender: 'received' },
-  ]);
+  // Fetch messages
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        setLoading(true);
+        const response = await axios.post('http://192.168.0.174:8000/api/v1/member_messages', { user });
+        setMessages(Object.values(response.data.messages));
 
-  // Handle message send
-  const handleSend = () => {
-    if (message.trim()) {
-      const newMessage = {
-        id: (messages.length + 1).toString(),
-        text: message,
-        sender: 'sent',
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, []);
+
+  const validateForm = () => {
+        if (!message.trim()) {
+          Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Message is required.' });
+          return false;
+        }
+        
+        return true;
       };
-      setMessages([...messages, newMessage]);
-      setMessage('');
-    }
+
+const handleRegister = async () => {
+    if (!validateForm()) return
+    try {
+            const response = await axios.post('http://192.168.0.174:8000/api/v1/store_member_message', {
+              message,
+              user
+            });
+            console.log(response);
+            // setMessages(Object.values(response.data.messages));
+            //   Toast.show({ type: 'success', text1: 'Successful', text2: 'Message Send Successfully !' });
+            
+          } catch (error) {
+            Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
+          }
   };
-
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={messages}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={[
-              styles.messageContainer,
-              item.sender === 'sent' ? styles.sentMessage : styles.receivedMessage,
-            ]}
-          >
-            <Text style={styles.messageText}>{item.text}</Text>
-          </View>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <ScrollView contentContainerStyle={styles.chatContainer}>
+        {loading ? (
+          <Text style={styles.loadingText}>Loading messages...</Text>
+        ) : (
+          messages.length > 0 ? (
+            messages.map((item, index) => (
+              <View key={index} style={[styles.messageRow, item.send_from === 'admin' ? styles.received : styles.sent]}>
+                <View style={styles.messageContent}>
+                  <Text style={styles.messageText}>{item.message}</Text>
+                  <Text style={styles.messageTime}>
+                    {new Date(item.date).toLocaleString()}
+                  </Text>
+                </View>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.noMessagesText}>No messages available</Text>
+          )
         )}
-        inverted
-        contentContainerStyle={styles.messageList}
-      />
+      </ScrollView>
 
-      {/* Input container */}
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : undefined} style={styles.inputContainer}>
+      {/* Input Field */}
+      <View style={styles.inputContainer}>
         <TextInput
-          style={styles.input}
-          placeholder="Type a message"
-          placeholderTextColor="#999"
           value={message}
           onChangeText={setMessage}
+          placeholder="Type your message..."
+          style={styles.input}
         />
-        <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
-          <Ionicons name="send" size={24} color="#FFF" />
+        <TouchableOpacity style={styles.sendButton} onPress={handleRegister}>
+          <Text style={styles.sendButtonText} >Send</Text>
         </TouchableOpacity>
-      </KeyboardAvoidingView>
-    </View>
+      </View>
+    </KeyboardAvoidingView>
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
-    paddingTop: 20,
-    paddingHorizontal: 15,  // Added padding here
+    backgroundColor: '#f9f9f9',
   },
-  messageList: {
-    paddingBottom: 20, // Padding at the bottom for message spacing
+  chatContainer: {
+    padding: 10,
   },
-  messageContainer: {
-    padding: 12,
-    marginVertical: 8,
+  loadingText: {
+    textAlign: 'center',
+    fontSize: 18,
+    marginTop: 20,
+    color: 'gray',
+  },
+  noMessagesText: {
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 20,
+    color: 'gray',
+  },
+  messageRow: {
+    marginBottom: 10,
     maxWidth: '80%',
-    borderRadius: 10,
   },
-  sentMessage: {
-    backgroundColor: '#4D2600',
+  sent: {
     alignSelf: 'flex-end',
+    backgroundColor: '#d4f4d1',
+    borderRadius: 12,
+    padding: 10,
   },
-  receivedMessage: {
-    backgroundColor: '#FFF',
-    borderColor: '#4D2600',
-    borderWidth: 1,
+  received: {
     alignSelf: 'flex-start',
+    backgroundColor: '#f1f0f0',
+    borderRadius: 12,
+    padding: 10,
+  },
+  messageContent: {
+    flexDirection: 'column',
   },
   messageText: {
-    color: '#FFF',
     fontSize: 16,
+  },
+  messageTime: {
+    fontSize: 12,
+    color: 'gray',
+    marginTop: 5,
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 10,
-    paddingVertical: 10,  // Added padding here for spacing
-    backgroundColor: '#FFF',
+    padding: 10,
     borderTopWidth: 1,
     borderTopColor: '#ddd',
-    marginBottom: 15, // Added margin at the bottom of the input field
+    backgroundColor: '#fff',
   },
   input: {
     flex: 1,
-    backgroundColor: '#F0F0F0',
-    borderRadius: 25,
-    paddingVertical: 12,
-    paddingLeft: 15,
-    fontSize: 16,
-    marginRight: 10, // Space between input and send button
+    padding: 10,
+    borderRadius: 20,
+    backgroundColor: '#f1f0f0',
   },
   sendButton: {
-    backgroundColor: '#4D2600',
-    borderRadius: 25,
-    padding: 12,
-    justifyContent: 'center',
-    alignItems: 'center',
+    marginLeft: 10,
+    backgroundColor: '#bc1d21',
+    padding: 10,
+    borderRadius: 20,
+  },
+  sendButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });
 
-export default ChatView;
+export default ChatScreen;

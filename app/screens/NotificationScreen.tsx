@@ -1,23 +1,26 @@
 import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
-import React,{useState, useEffect} from 'react'
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const NotificationScreen = ({ navigation }: any) => {
-    const [notifications, setNotifications] = useState([]);
+  const [notifications, setNotifications] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [user, setUser] = useState(1);
 
   useEffect(() => {
-    // Fetch notifications from an API or AsyncStorage
+    // Fetch notifications from an API
     const fetchNotifications = async () => {
       try {
-        // Example of fetching notifications from AsyncStorage or replace with an API call
-        const savedNotifications = [
-          { id: '1', title: 'New Message', description: 'You have received a new message.' },
-          { id: '2', title: 'App Update', description: 'New app update is available.' },
-          { id: '3', title: 'Reminder', description: 'Don\'t forget your meeting at 3 PM.' },
-        ];
-        setNotifications(savedNotifications); // Replace with fetched data
+        // const response = await fetch('http://192.168.0.174:8000/api/v1/member_messages');
+        const response = await axios.get('http://192.168.0.174:8000/api/v1/news');
+      
+        console.log(response.data.messages);
+        setNotifications(Object.values(response.data.messages)); // Replace with the appropriate structure from the API response
       } catch (error) {
-        console.error("Error fetching notifications:", error);
-      }
+        setError("Failed to load notifications"); // Handle any errors
+      } 
     };
 
     fetchNotifications();
@@ -33,61 +36,74 @@ const NotificationScreen = ({ navigation }: any) => {
   );
 
   const handleNotificationClick = (notification) => {
-    // Handle the notification click, e.g., navigate to a detail page
     console.log('Notification clicked:', notification);
-    // Example navigation to notification detail page
     navigation.navigate('NotificationDetail', { notification });
   };
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Notifications</Text>
       {notifications.length === 0 ? (
         <Text style={styles.noNotifications}>No new notifications</Text>
       ) : (
         <FlatList
           data={notifications}
           renderItem={renderNotificationItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id.toString()}
         />
       )}
+      {error && <Text style={styles.errorText}>{error}</Text>}
     </View>
-  )
-}
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f9f9f9',
+    padding: 10,
+    backgroundColor: '#F0F0F0', // Light background color
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: 'bold',
-    marginBottom: 10,
+    color: '#333',
+    marginBottom: 15,
   },
   noNotifications: {
     fontSize: 16,
-    color: 'gray',
+    color: '#888',
     textAlign: 'center',
-    marginTop: 20,
+    marginTop: 30,
   },
   notificationItem: {
     backgroundColor: '#fff',
     padding: 15,
-    borderRadius: 8,
-    marginBottom: 10,
+    borderRadius: 10,
+    marginBottom: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 2,
-    elevation: 3,
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 4,
+    borderLeftWidth: 5,
+    borderLeftColor: '#4CAF50', // Green accent line on the left
   },
   notificationTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontWeight: '600',
+    color: '#333',
+    marginBottom: 5,
   },
   notificationDescription: {
     fontSize: 14,
-    color: 'gray',
+    color: '#666',
+    lineHeight: 20,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    fontSize: 16,
+    marginTop: 20,
   },
 });
+
 export default NotificationScreen;

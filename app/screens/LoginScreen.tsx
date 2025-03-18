@@ -29,6 +29,8 @@ const LoginScreen = ({ navigation }: any) => {
   };
 
   const handleRegister = async () => {
+      navigation.replace('App');
+
     if (!validateForm()) return;
 
     try {
