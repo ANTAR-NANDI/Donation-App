@@ -16,7 +16,7 @@ export default function MemberRegistrationScreen() {
         return false;
       }
       if (!mother_name.trim()) {
-        Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Father Name is required.' });
+        Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Mother Name is required.' });
         return false;
       }
       if (!permanent_address.trim()) {
@@ -45,7 +45,7 @@ export default function MemberRegistrationScreen() {
               present_address,
               permanent_address,
               date_of_birth,
-              user:await AsyncStorage.getItem('@user')
+              id:await AsyncStorage.getItem('@user')
             });
 
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
