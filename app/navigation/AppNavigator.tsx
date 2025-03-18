@@ -3,7 +3,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity,Button } from 'react-native';
 import HomeScreen from '../screens/HomeScreen';
 import DetailsScreen from '../screens/MemberRegistrationScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -14,7 +14,7 @@ import DonationScreen from '../screens/DonationScreen';
 import NotificationScreen from '../screens/NotificationScreen';
 import ChatScreen from '../screens/ChatScreen';
 import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
-
+import LogoutScreen from '../screens/LogoutScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -92,6 +92,9 @@ const TabNavigator = ({ navigation }) => (
   </Tab.Navigator>
 );
 
+const handleLogout = async () => {
+    console.log("press")
+  };
 // Drawer Navigator
 const DrawerNavigator = () => (
  <Drawer.Navigator>
@@ -143,12 +146,13 @@ const DrawerNavigator = () => (
     
     {/* Logout Screen */}
     <Drawer.Screen 
-      name="Logout" 
-      component={DonationScreen} 
-      options={{
-        drawerIcon: () => <Ionicons name="log-out-outline" size={24} color="black" />,
-      }} 
-    />
+  name="Logout" 
+  component={LogoutScreen}  // This now directly shows the LogoutScreen with the modal
+  options={{
+    headerShown: false,
+    drawerIcon: () => <Ionicons name="log-out-outline" size={24} color="black" />,
+  }} 
+/>
   </Drawer.Navigator>
 );
 
