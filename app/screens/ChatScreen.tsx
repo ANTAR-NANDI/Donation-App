@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
+import BASE_URL from '@/config';
 const ChatScreen = ({ navigation }) => {
     const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
@@ -15,7 +16,12 @@ const ChatScreen = ({ navigation }) => {
     const fetchMessages = async () => {
       try {
         setLoading(true);
-        const response = await axios.post('http://192.168.0.174:8000/api/v1/member_messages', { user });
+        const response = await axios.get(`${BASE_URL}/member_messages`, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
+          },
+        });
         setMessages(Object.values(response.data.messages));
 
       } catch (error) {
@@ -24,8 +30,10 @@ const ChatScreen = ({ navigation }) => {
         setLoading(false);
       }
     };
-
-    fetchMessages();
+    const intervalId = setInterval(() => {
+    fetchMessages();  // Replace with your API call or any other logic
+  }, 2000);
+    
   }, []);
 
   const validateForm = () => {
@@ -40,13 +48,18 @@ const ChatScreen = ({ navigation }) => {
 const handleRegister = async () => {
     if (!validateForm()) return
     try {
-            const response = await axios.post('http://192.168.0.174:8000/api/v1/store_member_message', {
-              message,
-              user
-            });
-            console.log(response);
-            // setMessages(Object.values(response.data.messages));
-            //   Toast.show({ type: 'success', text1: 'Successful', text2: 'Message Send Successfully !' });
+            const response = await axios.post(`${BASE_URL}/member_message`,
+        { message: message }, // Include message in request body
+        {
+          headers: {
+            Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
+            "Content-Type": "application/json", // Ensure correct content type
+          },
+        }
+    );
+            setMessage('');
+            setMessages(Object.values(response.data.messages));
+              Toast.show({ type: 'success', text1: 'Successful', text2: 'Message Send Successfully !' });
             
           } catch (error) {
             Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });

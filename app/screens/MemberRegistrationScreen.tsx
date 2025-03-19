@@ -3,6 +3,7 @@ import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Modal, Scro
 import { Card, Avatar } from 'react-native-paper';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
+import BASE_URL from "../../config";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function MemberRegistrationScreen() {
   const [father_name, setFatherName] = useState('');
@@ -39,15 +40,20 @@ export default function MemberRegistrationScreen() {
     if (!validateForm()) return
     try {
       
-            const response = await axios.post('http://192.168.0.174:8000/api/update_profile', {
+            const response = await axios.post(`${BASE_URL}/update_profile`, 
+              { 
               father_name,
               mother_name,
               present_address,
               permanent_address,
-              date_of_birth,
-              id:await AsyncStorage.getItem('@user')
-            });
-
+              date_of_birth
+             },
+              {
+                headers: {
+                  Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
+                  "Content-Type": "application/json", // Ensure correct content type
+                },
+               });
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
 
           } catch (error) {

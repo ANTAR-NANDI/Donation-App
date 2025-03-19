@@ -15,6 +15,7 @@ import NotificationScreen from '../screens/NotificationScreen';
 import ChatScreen from '../screens/ChatScreen';
 import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
 import LogoutScreen from '../screens/LogoutScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -168,7 +169,6 @@ const AuthStack = () => (
 // Root Navigator
 const RootStackNavigator = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
   return (
     <Stack.Navigator initialRouteName={isAuthenticated ? 'App' : 'Auth'}>
       <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />

@@ -5,7 +5,7 @@ import {
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import BASE_URL from "../../config";
 const MemberRegistrationForm = () => {
   const [name, setName] = useState("");
   const [father_name, setFatherName] = useState("");
@@ -17,7 +17,6 @@ const MemberRegistrationForm = () => {
   const [nationality, setNationality] = useState("");
   const [date_of_birth, setDateOfBirth] = useState("");
   const [blood, setBlood] = useState("");
-  const [image, setImage] = useState(null);  // image as URI
   const [present_address, setPresentAddress] = useState("");
   const [permanent_address, setPermanentAddress] = useState("");
   const [user, setUser] = useState(null);
@@ -32,12 +31,13 @@ const MemberRegistrationForm = () => {
           return;
         }
 
-        const response = await axios.get("http://192.168.0.174:8000/api/user", {
+        const response = await axios.get(`${BASE_URL}/user`, {
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
+        console.log(response)
 
         setUser(response.data); // Update state with user data
       } catch (error) {
@@ -51,20 +51,18 @@ const MemberRegistrationForm = () => {
   useEffect(() => {
     // Once user data is fetched, set the fields' state
     if (user) {
-      setName(user.name || "");
-      setFatherName(user.father_name || "");
-      setMotherName(user.mother_name || "");
+      setName(user.username || "");
+      setFatherName(user.fathers_name || "");
+      setMotherName(user.mothers_name || "");
       setPhone(user.phone || "");
-      setNid(user.nid || "");
+      setNid(user.nid_number || "");
       setEmail(user.email || "");
       setOccupation(user.occupation || "");
       setNationality(user.nationality || "");
-      setDateOfBirth(user.date_of_birth || "");
+      setDateOfBirth(user.dob || "");
       setBlood(user.blood_group || "");
       setPresentAddress(user.present_address || "");
       setPermanentAddress(user.permanent_address || "");
-      // Optionally, you can also set the image here if user.image is available
-      setImage(user.image ? user.image : null);
     }
   }, [user]);
 
@@ -99,36 +97,34 @@ const MemberRegistrationForm = () => {
 
   const handleSubmit = async () => {
     if (!validateForm()) return;
-
     try {
-      // Create form data to send image as well
-      const formData = new FormData();
-      formData.append('name', name);
-      formData.append('father_name', father_name);
-      formData.append('mother_name', mother_name);
-      formData.append('phone', phone);
-      formData.append('nid', nid);
-      formData.append('email', email);
-      formData.append('occupation', occupation);
-      formData.append('nationality', nationality);
-      formData.append('date_of_birth', date_of_birth);
-      formData.append('blood', blood);
-      formData.append('present_address', present_address);
-      formData.append('permanent_address', permanent_address);
-      formData.append('id', await AsyncStorage.getItem('@user'));
+      
+            const response = await axios.post(`${BASE_URL}/update_profile`, 
+              { 
+              name,
+              father_name,
+              mother_name,
+              phone,
+              nid,
+              email,
+              occupation,
+              nationality,
+              date_of_birth,
+              blood,
+              present_address,
+              permanent_address,
+             },
+              {
+                headers: {
+                  Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
+                  "Content-Type": "application/json", // Ensure correct content type
+                },
+               });
+              Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
 
-      // Send form data with the image
-      const response = await axios.post('http://192.168.0.174:8000/api/update_profile', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-
-      Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
-
-    } catch (error) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response?.data?.error || error.message });
-    }
+          } catch (error) {
+            Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
+          }
   };
 
   return (

@@ -5,7 +5,7 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNPickerSelect from 'react-native-picker-select';
-
+import BASE_URL from '@/config';
 const DonationScreen = ({ navigation }: any) => {
   // State to store form inputs
   const [name, setName] = useState('');
@@ -32,22 +32,26 @@ const DonationScreen = ({ navigation }: any) => {
   // Handle registration logic
   const handleRegister = async () => {
     if (!validateForm()) return;
+     try {
+      
+            const response = await axios.post(`${BASE_URL}/donation`, 
+              { 
+             name,
+             amount,
+             method, 
+             },
+              {
+                headers: {
+                  Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
+                  "Content-Type": "application/json", // Ensure correct content type
+                },
+               });
+              Toast.show({ type: 'success', text1: 'Success', text2: 'Donation Successful!' });
+          navigation.replace('App');
 
-    try {
-      const response = await axios.post('http://192.168.0.174:8000/api/donation', {
-        name,
-        amount,
-        method, 
-        user_id: await AsyncStorage.getItem('@user') // Sending selected payment method
-      });
-
-      console.log(response);
-
-      Toast.show({ type: 'success', text1: 'Success', text2: 'Donation Successful!' });
-      navigation.replace('App');
-    } catch (error) {
-      Toast.show({ type: 'error', text1: 'Error', text2: error.response.data.error || 'Something went wrong' });
-    }
+          } catch (error) {
+            Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
+          }
   };
 
   return (

@@ -1,19 +1,18 @@
 import React, { useState } from 'react';
-import { Link, Redirect,useRouter } from 'expo-router';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { Link,useRouter } from 'expo-router';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import * as SecureStore from 'expo-secure-store';
+import BASE_URL from "../../config";
 const RegistrationScreen = ({ navigation }: any) => {
-   const [userToken, setUserToken] = useState('');
-  const router = useRouter();
   // State to store form inputs
-  const [name, setName] = useState('a');
-  const [email, setEmail] = useState('a@gmail.com');
-  const [phone, setPhone] = useState('01824506162');
-  const [password, setPassword] = useState('12345678');
-  const [confirmPassword, setConfirmPassword] = useState('12345678');
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState({});
 
 
   const validateForm = () => {
@@ -22,7 +21,7 @@ const RegistrationScreen = ({ navigation }: any) => {
       return false;
     }
     if (!email.trim() || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter a valid email address.' });
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter a Valid Email address.' });
       return false;
     }
     if (!phone.trim() || !/^\d{11}$/.test(phone)) {
@@ -39,25 +38,30 @@ const RegistrationScreen = ({ navigation }: any) => {
     }
     return true;
   };
-
+  const renderError = (field) => {
+    return error?.response?.data?.errors?.[field]?.map((errMsg, index) => (
+      <Text key={index} style={styles.errorText}>{errMsg}</Text>
+    ));
+  };
   const handleRegister = async () => {
         if (!validateForm()) return
 
           try {
-            const response = await axios.post('http://192.168.0.174:8000/api/register', {
-              name,
+            const response = await axios.post(`${BASE_URL}/member/register`, {
+              username:name,
               email,
               phone,
               password,
               password_confirmation: confirmPassword,
             });
-            console.log(response);
             await AsyncStorage.setItem('@auth_token', response.data.token);
             await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Registered Successfully !' });
-              navigation.replace('App');
+               setTimeout(() => {
+                  navigation.replace('App');
+                }, 1000);
           } catch (error) {
-            Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
+            setError(error)
           }
         };
 
@@ -73,6 +77,7 @@ const RegistrationScreen = ({ navigation }: any) => {
         value={name}
         onChangeText={setName}
       />
+      {renderError('username')}
 
       <Text style={styles.label}>Email *</Text>
       <TextInput
@@ -83,6 +88,12 @@ const RegistrationScreen = ({ navigation }: any) => {
         onChangeText={setEmail}
         keyboardType="email-address"
       />
+      
+        {renderError('email')}
+      
+  
+
+      
 
       <Text style={styles.label}>Phone Number *</Text>
       <TextInput
@@ -93,6 +104,7 @@ const RegistrationScreen = ({ navigation }: any) => {
         onChangeText={setPhone}
         keyboardType="phone-pad"
       />
+      {renderError('phone')}
 
       <Text style={styles.label}>Password *</Text>
       <TextInput
@@ -103,6 +115,7 @@ const RegistrationScreen = ({ navigation }: any) => {
         onChangeText={setPassword}
         secureTextEntry
       />
+      {renderError('password')}
 
       <Text style={styles.label}>Confirm Password *</Text>
       <TextInput
@@ -113,21 +126,27 @@ const RegistrationScreen = ({ navigation }: any) => {
         onChangeText={setConfirmPassword}
         secureTextEntry
       />
+      {renderError('password')}
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
 
-      <Link href="/" asChild>
-        <TouchableOpacity style={styles.backButton}>
+      
+        <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.backButton}>
           <Text style={styles.buttonText}>Back</Text>
         </TouchableOpacity>
-      </Link>
+
        <Toast />
     </View>
   );
 };
 const styles = StyleSheet.create({
+  errorText: {
+    color: 'red',
+    fontSize: 20,
+    marginTop: 2,
+  },
   container: {
     flex: 1,
     backgroundColor: '#D5C295',

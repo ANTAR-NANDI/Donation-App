@@ -2,7 +2,7 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity } from 'react-native
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import BASE_URL from "../../config";
 const NotificationScreen = ({ navigation }: any) => {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -13,10 +13,18 @@ const NotificationScreen = ({ navigation }: any) => {
     // Fetch notifications from an API
     const fetchNotifications = async () => {
       try {
-        // const response = await fetch('http://192.168.0.174:8000/api/v1/member_messages');
-        const response = await axios.get('http://192.168.0.174:8000/api/v1/news');
-      
-        console.log(response.data.messages);
+        const token = await AsyncStorage.getItem("@auth_token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        const response = await axios.get(`${BASE_URL}/news`, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }); 
         setNotifications(Object.values(response.data.messages)); // Replace with the appropriate structure from the API response
       } catch (error) {
         setError("Failed to load notifications"); // Handle any errors

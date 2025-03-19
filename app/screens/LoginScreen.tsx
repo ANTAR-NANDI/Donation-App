@@ -4,19 +4,14 @@ import { View, Text, Button,  TextInput, TouchableOpacity, StyleSheet } from 're
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import BASE_URL from "../../config";
 const LoginScreen = ({ navigation }: any) => {
-  const [email, setEmail] = useState('a@gmail.com');
-  const [password, setPassword] = useState('12345678');
-  // const handleLogin = () => {
-  //   // Here, add your login logic (API call, Firebase, etc.)
-    
-  //   // After successful login, navigate to the main app's TabNavigator
-  //   navigation.replace('App');  // This will replace the login screen with the TabNavigator
-  // };
-
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState({});
   const validateForm = () => {
-    if (!email.trim() || !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(email)) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter a valid email address.' });
+    if (!phone.trim()) {
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter Your Phone Number.' });
       return false;
     }
 
@@ -28,23 +23,31 @@ const LoginScreen = ({ navigation }: any) => {
     return true;
   };
 
-  const handleRegister = async () => {
-      navigation.replace('App');
+  const renderError = (field) => {
+      return error?.response?.data?.errors?.[field]?.map((errMsg, index) => (
+        <Text key={index} style={styles.errorText}>{errMsg}</Text>
+      ));
+    };
 
+  const handleLogin = async () => {
+    console.log(BASE_URL);
     if (!validateForm()) return;
 
     try {
-      const response = await axios.post('http://192.168.0.174:8000/api/login', {
-        email,
+      const response = await axios.post(`${BASE_URL}/member/login`, {
+        phone,
         password,
       });
       const { token, user } = response.data;
       await AsyncStorage.setItem('@auth_token', token);
       await AsyncStorage.setItem('@user', JSON.stringify(user.id));
       Toast.show({ type: 'success', text1: 'Successful', text2: 'Login Successfully !' });
-      navigation.replace('App');
+                setTimeout(() => {
+                  navigation.replace('App');
+                }, 500);
     } catch (error) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response?.data?.error || 'An error occurred' });
+      console.log(error)
+      setError(error)
     }
   };
 
@@ -52,15 +55,15 @@ const LoginScreen = ({ navigation }: any) => {
      <View style={styles.container}>
       <Text style={styles.heading}>Sign In</Text>
 
-      <Text style={styles.label}>Email *</Text>
+      <Text style={styles.label}>Phone Number *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Email"
+        placeholder="Enter Your Phone Number"
         placeholderTextColor="#4D2600"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
+        value={phone}
+        onChangeText={setPhone}
       />
+      {renderError('phone')}
 
       <Text style={styles.label}>Password *</Text>
       <TextInput
@@ -71,8 +74,9 @@ const LoginScreen = ({ navigation }: any) => {
         onChangeText={setPassword}
         secureTextEntry
       />
+      {renderError('password')}
 
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
+      <TouchableOpacity style={styles.registerButton} onPress={handleLogin}>
         <Text style={styles.buttonText}>Sign In</Text>
       </TouchableOpacity>
 
@@ -85,6 +89,10 @@ const LoginScreen = ({ navigation }: any) => {
   );
 };
 const styles = StyleSheet.create({
+  errorText: {
+    color: 'red',
+    fontSize: 20,
+  },
   container: {
     flex: 1,
     backgroundColor: '#D5C295',

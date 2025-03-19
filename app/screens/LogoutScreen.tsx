@@ -3,6 +3,7 @@ import { View, Text, Modal, Button,TouchableOpacity, StyleSheet } from 'react-na
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
+import BASE_URL from "../../config";
 const LogoutScreen = ({ navigation }) => {
   const [modalVisible, setModalVisible] = useState(true);  // Start with the modal visible
 
@@ -14,13 +15,12 @@ const LogoutScreen = ({ navigation }) => {
       await AsyncStorage.removeItem('@auth_token');
 
       if (token) {
-        await axios.post('http://192.168.0.174:8000/api/logout', {}, {
+        await axios.post(`${BASE_URL}/member/logout`, {}, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
       }
-
       navigation.replace('Auth');
     } catch (error) {
       console.error('Error during logout', error);
