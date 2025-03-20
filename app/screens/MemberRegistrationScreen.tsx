@@ -35,7 +35,6 @@ export default function MemberRegistrationScreen() {
       return true;
     };
   const handleRegister = async () => {
-    alert("Clicked!")
     if (!validateForm()) return
     try {
       

@@ -7,7 +7,7 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from "../../config";
-const MemberRegistrationForm = () => {
+const MemberRegistrationForm = ({ navigation }) => {
   const [name, setName] = useState("");
   const [father_name, setFatherName] = useState("");
   const [mother_name, setMotherName] = useState("");
@@ -127,10 +127,13 @@ const fetchUserData = async () => {
                   "Content-Type": "application/json", // Ensure correct content type
                 },
                });
+               console.log(response)
                fetchUserData();
+               navigation.replace('App');
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
 
           } catch (error) {
+                console.log(error)
             Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
           }
   };
@@ -155,6 +158,7 @@ const fetchUserData = async () => {
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>Update Data</Text>
       </TouchableOpacity>
+      <Toast />
     </ScrollView>
   );
 };

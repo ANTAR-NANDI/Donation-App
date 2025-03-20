@@ -34,7 +34,6 @@ const NotificationScreen = ({ navigation }) => {
   }, []);
 
   const handleNotificationClick = (notification) => {
-    console.log('Notification clicked:', notification.id);
     navigation.navigate('NotificationDetail', { id: notification.id });
   };
 

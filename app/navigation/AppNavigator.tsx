@@ -17,6 +17,8 @@ import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
 import LogoutScreen from '../screens/LogoutScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
+import PronamiScreen from '../screens/PronamiScreen';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -157,8 +159,8 @@ const DrawerNavigator = () => (
     
     {/* Donation Screen */}
     <Drawer.Screen 
-      name="Donation" 
-      component={DonationScreen} 
+      name="Pronami" 
+      component={PronamiScreen} 
       options={{
         drawerIcon: () => <Ionicons name="heart-outline" size={24} color="black" />,
       }} 
