@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
@@ -187,7 +187,22 @@ const AuthStack = () => (
 
 // Root Navigator
 const RootStackNavigator = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const checkAuthToken = async () => {
+      const token = await AsyncStorage.getItem('@auth_token');
+      setIsAuthenticated(!!token);
+    };
+
+    checkAuthToken();
+  }, []);
+
+  if (isAuthenticated === null) {
+    // You can return a loading screen or null while checking the auth token
+    return null;
+  }
+
   return (
     <Stack.Navigator initialRouteName={isAuthenticated ? 'App' : 'Auth'}>
       <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
@@ -195,5 +210,6 @@ const RootStackNavigator = () => {
     </Stack.Navigator>
   );
 };
+
 
 export default RootStackNavigator;
