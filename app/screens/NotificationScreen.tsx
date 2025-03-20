@@ -3,14 +3,12 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from "../../config";
-const NotificationScreen = ({ navigation }: any) => {
+
+const NotificationScreen = ({ navigation }) => {
   const [notifications, setNotifications] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [user, setUser] = useState(1);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    // Fetch notifications from an API
     const fetchNotifications = async () => {
       try {
         const token = await AsyncStorage.getItem("@auth_token");
@@ -24,15 +22,21 @@ const NotificationScreen = ({ navigation }: any) => {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
-        }); 
-        setNotifications(Object.values(response.data.news)); // Replace with the appropriate structure from the API response
+        });
+
+        setNotifications(response.data.news || []); 
       } catch (error) {
-        setError("Failed to load notifications"); // Handle any errors
-      } 
+        setError("Failed to load notifications");
+      }
     };
 
     fetchNotifications();
   }, []);
+
+  const handleNotificationClick = (notification) => {
+    console.log('Notification clicked:', notification.id);
+    navigation.navigate('NotificationDetail', { id: notification.id });
+  };
 
   const renderNotificationItem = ({ item }) => (
     <TouchableOpacity style={styles.notificationItem} onPress={() => handleNotificationClick(item)}>
@@ -42,11 +46,6 @@ const NotificationScreen = ({ navigation }: any) => {
       </View>
     </TouchableOpacity>
   );
-
-  const handleNotificationClick = (notification) => {
-    console.log('Notification clicked:', notification);
-    navigation.navigate('NotificationDetail', { notification });
-  };
 
   return (
     <View style={styles.container}>
@@ -68,13 +67,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    backgroundColor: '#F0F0F0', // Light background color
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    color: '#333',
-    marginBottom: 15,
+    backgroundColor: '#F0F0F0',
   },
   noNotifications: {
     fontSize: 16,
@@ -93,7 +86,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 4,
     borderLeftWidth: 5,
-    borderLeftColor: '#4CAF50', // Green accent line on the left
+    borderLeftColor: '#4CAF50',
   },
   notificationTitle: {
     fontSize: 18,

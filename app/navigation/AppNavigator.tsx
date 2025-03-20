@@ -16,6 +16,7 @@ import ChatScreen from '../screens/ChatScreen';
 import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
 import LogoutScreen from '../screens/LogoutScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -46,6 +47,21 @@ const DashboardStackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
+// Stack Navigator for the Notification section
+const NotificationStackNavigator = ({ navigation }) => (
+  <Stack.Navigator>
+    <Stack.Screen 
+      name="Notification" 
+      component={NotificationScreen} 
+      options={getScreenOptions(navigation, 'Home')} 
+    />
+    <Stack.Screen 
+      name="NotificationDetail" 
+      component={NotificationDetailsScreen} 
+      options={{ title: 'Notification Details' }} 
+    />
+  </Stack.Navigator>
+);
 // Bottom Tab Navigator
 const TabNavigator = ({ navigation }) => (
   <Tab.Navigator>
@@ -76,8 +92,10 @@ const TabNavigator = ({ navigation }) => (
     />
     <Tab.Screen
       name="Notifications"
-      component={NotificationScreen}
+      component={NotificationStackNavigator}
+      
       options={{
+        headerShown: false,
         ...getScreenOptions(navigation, 'Notifications'),
         tabBarIcon: ({ color, size }) => <Ionicons name="notifications-outline" size={size} color={color} />,
       }}
