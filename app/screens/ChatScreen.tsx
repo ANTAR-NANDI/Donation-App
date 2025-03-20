@@ -30,9 +30,9 @@ const ChatScreen = ({ navigation }) => {
         setLoading(false);
       }
     };
-    const intervalId = setInterval(() => {
-    fetchMessages();  // Replace with your API call or any other logic
-  }, 2000);
+
+    fetchMessages();  
+
     
   }, []);
 

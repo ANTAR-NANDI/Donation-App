@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
-import { Card, Avatar } from 'react-native-paper';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import BASE_URL from "../../config";
@@ -36,7 +35,7 @@ export default function MemberRegistrationScreen() {
       return true;
     };
   const handleRegister = async () => {
-    console.log(await AsyncStorage.getItem('@user'))
+    alert("Clicked!")
     if (!validateForm()) return
     try {
       
@@ -54,6 +53,7 @@ export default function MemberRegistrationScreen() {
                   "Content-Type": "application/json", // Ensure correct content type
                 },
                });
+               console.log(response);
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
 
           } catch (error) {
@@ -81,7 +81,6 @@ export default function MemberRegistrationScreen() {
                 placeholderTextColor="#4D2600"
                 value={mother_name}
                 onChangeText={setMotherName}
-                keyboardType="email-address"
               />
 
                 <Text style={styles.label}>Present Address *</Text>
@@ -91,7 +90,6 @@ export default function MemberRegistrationScreen() {
                 placeholderTextColor="#4D2600"
                 value={present_address}
                 onChangeText={setPresentAddress}
-                keyboardType="email-address"
               />
               <Text style={styles.label}>Permanent Address *</Text>
               <TextInput
@@ -100,7 +98,6 @@ export default function MemberRegistrationScreen() {
                 placeholderTextColor="#4D2600"
                 value={permanent_address}
                 onChangeText={setPermanentAddress}
-                keyboardType="email-address"
               />
               <Text style={styles.label}>Date of Birth *</Text>
               <TextInput
@@ -109,13 +106,13 @@ export default function MemberRegistrationScreen() {
                 placeholderTextColor="#4D2600"
                 value={date_of_birth}
                 onChangeText={setDateofBirth}
-                keyboardType="email-address"
               />
 
               <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
                 <Text style={styles.buttonText}>Register</Text>
               </TouchableOpacity>
             </ScrollView>
+                <Toast />
     </View>
   )
 }

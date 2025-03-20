@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useCallback } from "react";
 import { 
   View, Text, TextInput, TouchableOpacity, Alert, Image , ScrollView, StyleSheet 
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -22,8 +23,18 @@ const MemberRegistrationForm = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    
-    const fetchUserData = async () => {
+    fetchUserData();
+  }, []);
+
+
+  useFocusEffect(
+        useCallback(() => {
+            fetchUserData();
+        }, [])
+    );
+
+
+const fetchUserData = async () => {
       try {
         const token = await AsyncStorage.getItem("@auth_token");
         if (!token) {
@@ -44,10 +55,6 @@ const MemberRegistrationForm = () => {
         console.error("Error fetching user data:", error.response?.data || error.message);
       }
     };
-
-    fetchUserData();
-  }, []);
-
   useEffect(() => {
     // Once user data is fetched, set the fields' state
     if (user) {
@@ -120,6 +127,7 @@ const MemberRegistrationForm = () => {
                   "Content-Type": "application/json", // Ensure correct content type
                 },
                });
+               fetchUserData();
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
 
           } catch (error) {

@@ -25,7 +25,7 @@ const NotificationScreen = ({ navigation }: any) => {
             Authorization: `Bearer ${token}`,
           },
         }); 
-        setNotifications(Object.values(response.data.messages)); // Replace with the appropriate structure from the API response
+        setNotifications(Object.values(response.data.news)); // Replace with the appropriate structure from the API response
       } catch (error) {
         setError("Failed to load notifications"); // Handle any errors
       } 

@@ -86,6 +86,7 @@ const TabNavigator = ({ navigation }) => (
       name="Profile"
       component={ProfileScreen}
       options={{
+        
         ...getScreenOptions(navigation, 'Profile'),
         tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
       }}
