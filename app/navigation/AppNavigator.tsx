@@ -18,6 +18,7 @@ import LogoutScreen from '../screens/LogoutScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 import PronamiScreen from '../screens/PronamiScreen';
+import NotificationProvider from '../screens/Notification-Provider';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -51,18 +52,21 @@ const DashboardStackNavigator = ({ navigation }) => (
 
 // Stack Navigator for the Notification section
 const NotificationStackNavigator = ({ navigation }) => (
-  <Stack.Navigator>
-    <Stack.Screen 
-      name="Notification" 
-      component={NotificationScreen} 
-      options={getScreenOptions(navigation, 'Home')} 
-    />
-    <Stack.Screen 
-      name="NotificationDetail" 
-      component={NotificationDetailsScreen} 
-      options={{ title: 'Notification Details' }} 
-    />
-  </Stack.Navigator>
+  
+    <Stack.Navigator>
+      
+      <Stack.Screen 
+        name="Notification" 
+        component={NotificationScreen} 
+        options={getScreenOptions(navigation, 'Home')} 
+      />
+      <Stack.Screen 
+        name="NotificationDetail" 
+        component={NotificationDetailsScreen} 
+        options={{ title: 'Notification Details' }} 
+      />
+      
+    </Stack.Navigator>
 );
 // Bottom Tab Navigator
 const TabNavigator = ({ navigation }) => (
@@ -206,10 +210,12 @@ const RootStackNavigator = () => {
   }
 
   return (
+    <NotificationProvider>
     <Stack.Navigator initialRouteName={isAuthenticated ? 'App' : 'Auth'}>
       <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
       <Stack.Screen name="App" component={DrawerNavigator} options={{ headerShown: false }} />
     </Stack.Navigator>
+    </NotificationProvider>
   );
 };
 
