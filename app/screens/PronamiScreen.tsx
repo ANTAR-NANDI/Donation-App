@@ -8,8 +8,10 @@ import BASE_URL from '@/config';
 const PronamiScreen = ({ navigation }: any) => {
   // State to store form inputs
   const [name, setName] = useState('');
-  const [amount, setAmount] = useState('');
-  const [method, setPaymentMethod] = useState(null);
+  const [relation, setRelation] = useState('Choose Relation');
+  const [amount, setAmount] = useState(0);
+  const [category, setCategory] = useState('Choose a Category');
+  const [monthly_amount, setMonthlyAmount] = useState('');
 
   // Form validation
   const validateForm = () => {
@@ -17,12 +19,20 @@ const PronamiScreen = ({ navigation }: any) => {
       Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Name is required.' });
       return false;
     }
-    if (!amount.trim()) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Amount is required.' });
+    if (!relation.trim()) {
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Relation is required.' });
       return false;
     }
-    if (!method) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please select a payment method.' });
+    if (!amount) {
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please Enter an Amount.' });
+      return false;
+    }
+    if (!category) {
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please Enter Category.' });
+      return false;
+    }
+    if (!monthly_amount) {
+      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please Enter Monthly Amount.' });
       return false;
     }
     return true;
@@ -33,11 +43,13 @@ const PronamiScreen = ({ navigation }: any) => {
     if (!validateForm()) return;
      try {
       
-            const response = await axios.post(`${BASE_URL}/donation`, 
+            const response = await axios.post(`${BASE_URL}/pronami_store`, 
               { 
              name,
-             amount,
-             method, 
+             relation,
+             amount, 
+             category,
+             monthly_amount
              },
               {
                 headers: {
@@ -45,10 +57,11 @@ const PronamiScreen = ({ navigation }: any) => {
                   "Content-Type": "application/json", // Ensure correct content type
                 },
                });
-              Toast.show({ type: 'success', text1: 'Success', text2: 'Donation Successful!' });
-          navigation.replace('App');
+              Toast.show({ type: 'success', text1: 'Success', text2: 'আপনার প্রণামী যুক্ত হয়েছে!' });
+              navigation.replace('App');
 
           } catch (error) {
+            console.log(error);
             Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
           }
   };
@@ -68,7 +81,7 @@ const PronamiScreen = ({ navigation }: any) => {
        <Text style={styles.label}>Relationship *</Text>
       <View style={styles.pickerContainer}>
         <RNPickerSelect
-          onValueChange={(value) => setPaymentMethod(value)}
+          onValueChange={(value) => setRelation(value)}
           items={[
             { label: 'Himself', value: 'himself' },
             { label: 'Father', value: 'father' },
@@ -83,7 +96,7 @@ const PronamiScreen = ({ navigation }: any) => {
               right: 12,
             },
           }}
-          placeholder={{ label: 'Choose a payment method...', value: null }}
+          placeholder={{ label: 'Choose a Relation', value: null }}
           useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
         />
       </View>
@@ -100,7 +113,7 @@ const PronamiScreen = ({ navigation }: any) => {
       <Text style={styles.label}>Category *</Text>
       <View style={styles.pickerContainer}>
         <RNPickerSelect
-          onValueChange={(value) => setPaymentMethod(value)}
+          onValueChange={(value) => setCategory(value)}
           items={[
             { label: 'Daily', value: 'daily' },
             { label: 'Weekly', value: 'weekly' },
@@ -114,7 +127,7 @@ const PronamiScreen = ({ navigation }: any) => {
               right: 12,
             },
           }}
-          placeholder={{ label: 'Choose a payment method...', value: null }}
+          placeholder={{ label: 'Choose a Category', value: null }}
           useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
         />
       </View>
@@ -123,13 +136,13 @@ const PronamiScreen = ({ navigation }: any) => {
         style={styles.input}
         placeholder="Enter Donation Amount"
         placeholderTextColor="#4D2600"
-        value={amount}
-        onChangeText={setAmount}
+        value={monthly_amount}
+        onChangeText={setMonthlyAmount}
         keyboardType="numeric"
       />
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Donate</Text>
+        <Text style={styles.buttonText}>Add</Text>
       </TouchableOpacity>
 
       <Toast />
