@@ -54,8 +54,18 @@ const RegistrationScreen = ({ navigation }: any) => {
               password,
               password_confirmation: confirmPassword,
             });
+            // console.log(response.data.user.id);
             await AsyncStorage.setItem('@auth_token', response.data.token);
-            await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
+            await AsyncStorage.setItem('user', JSON.stringify(response.data.user.id));
+              try {
+                  const latest_response = await axios.post(`${BASE_URL}/save-token`, {
+                            expo_token:await AsyncStorage.getItem('@expoPushToken'),
+                            user_id: response.data.user.id
+                        });
+                  console.log(latest_response);
+                  } catch (error) {
+                    console.error('Error Updating push token:', error.response);
+                }
               Toast.show({ type: 'success', text1: 'Successful', text2: 'Registered Successfully !' });
                setTimeout(() => {
                   navigation.replace('App');

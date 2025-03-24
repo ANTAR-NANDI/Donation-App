@@ -41,7 +41,16 @@ const LoginScreen = ({ navigation }: any) => {
       const { token, user } = response.data;
       await AsyncStorage.setItem('@auth_token', token);
       await AsyncStorage.setItem('@user', JSON.stringify(user.id));
-      Toast.show({ type: 'success', text1: 'Successful', text2: 'Login Successfully !' });
+         try {
+                  const latest_response = await axios.post(`${BASE_URL}/save-token`, {
+                            expo_token:await AsyncStorage.getItem('@expoPushToken'),
+                            user_id: response.data.user.user
+                        });
+                  console.log('User and Push Token Updated Successfully');
+                  } catch (error) {
+                    console.error('Error Updating push token:', error.response);
+                }
+                Toast.show({ type: 'success', text1: 'Successful', text2: 'Login Successfully !' });
                 setTimeout(() => {
                   navigation.replace('App');
                 }, 500);
