@@ -38,22 +38,30 @@ const LoginScreen = ({ navigation }: any) => {
         phone,
         password,
       });
-      const { token, user } = response.data;
-      await AsyncStorage.setItem('@auth_token', token);
-      await AsyncStorage.setItem('@user', JSON.stringify(user.id));
-         try {
+      console.log(response.data)
+      if(response.data.status == false)
+      {
+        Toast.show({ type: 'error', text1: 'Failed', text2: 'Your account is inactive. Contact support !' });
+      }
+      else{
+          const { token, user } = response.data;
+          await AsyncStorage.setItem('@auth_token', token);
+          await AsyncStorage.setItem('@user', JSON.stringify(user.id));
+                try {
                   const latest_response = await axios.post(`${BASE_URL}/save-token`, {
                             expo_token:await AsyncStorage.getItem('@expoPushToken'),
                             user_id: response.data.user.user
                         });
-                  console.log('User and Push Token Updated Successfully');
-                  } catch (error) {
+                  } 
+                  catch (error) {
                     console.error('Error Updating push token:', error.response);
                 }
                 Toast.show({ type: 'success', text1: 'Successful', text2: 'Login Successfully !' });
                 setTimeout(() => {
                   navigation.replace('App');
-                }, 500);
+                }, 400);
+      }
+      
     } catch (error) {
       console.log(error)
       setError(error)
@@ -92,12 +100,25 @@ const LoginScreen = ({ navigation }: any) => {
         <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.backButton}>
           <Text style={styles.buttonText}>Register</Text>
         </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgetPassword')} style={styles.forgotPasswordButton}>
+  <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+</TouchableOpacity>
 
       <Toast />
     </View>
   );
 };
 const styles = StyleSheet.create({
+  forgotPasswordButton: {
+  marginTop: 10,
+  alignItems: "center",
+},
+
+forgotPasswordText: {
+  color: "blue",
+  textDecorationLine: "underline",
+  fontSize: 16,
+},
   errorText: {
     color: 'red',
     fontSize: 20,

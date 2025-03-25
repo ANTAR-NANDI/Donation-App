@@ -18,6 +18,8 @@ import LogoutScreen from '../screens/LogoutScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 import PronamiScreen from '../screens/PronamiScreen';
+import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
+import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import NotificationProvider from '../screens/Notification-Provider';
 
 const Stack = createStackNavigator();
@@ -187,6 +189,8 @@ const AuthStack = () => (
   <Stack.Navigator initialRouteName="Index">
     <Stack.Screen name="Index" component={Index} options={{ title: 'Home' }} />
     <Stack.Screen name="Login" component={LoginScreen} options={{ title: 'Login' }} />
+    <Stack.Screen name="ForgetPassword" component={ForgetPasswordScreen} options={{ title: 'Forget Password' }} />
+    <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} options={{ title: 'Reset Password' }} />
     <Stack.Screen name="Register" component={RegistrationScreen} />
   </Stack.Navigator>
 );
