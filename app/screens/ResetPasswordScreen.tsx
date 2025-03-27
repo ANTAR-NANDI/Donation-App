@@ -3,7 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "reac
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import BASE_URL from "../../config";
-
+import { useTranslation } from 'react-i18next';
 export default function ForgotPassword({ navigation,route }) {
    const { phone } = route.params;
   const [otp, setOtp] = useState("");
@@ -12,7 +12,7 @@ export default function ForgotPassword({ navigation,route }) {
   const [error, setError] = useState({});
   const [timeLeft, setTimeLeft] = useState(60); // 2 min 30 sec
   const [isResendDisabled, setIsResendDisabled] = useState(true);
-
+  const { t, i18n } = useTranslation();
   // Countdown Timer Effect
   useEffect(() => {
     if (timeLeft <= 0) {
@@ -108,32 +108,32 @@ export default function ForgotPassword({ navigation,route }) {
   return (
     <View style={styles.container}>
       <Image source={require("../../assets/images/topoban.png")} style={styles.logo} />
-      <Text style={styles.title}>Forgot Password</Text>
-      <Text style={styles.subtitle}>Enter the OTP to reset your password</Text>
+      <Text style={styles.title}>{t('forget_password')}</Text>
+      <Text style={styles.subtitle}>{t('reset_password_heading')}</Text>
 
       {/* OTP Input */}
-      <TextInput style={styles.input} placeholder="Enter OTP" keyboardType="number-pad" value={otp} onChangeText={setOtp} />
+      <TextInput style={styles.input} placeholder={t('enter_otp')} keyboardType="number-pad" value={otp} onChangeText={setOtp} />
             <Text>Reset Password for {phone}</Text>
 
       {/* Countdown Timer */}
       <Text style={{ color: timeLeft <= 10 ? "red" : "black", marginBottom: 10 }}>
-        Resend OTP in {formatTime(timeLeft)}
+        {t('resend_otp_in')} {formatTime(timeLeft)}
       </Text>
 
       {/* Resend OTP Button */}
       <TouchableOpacity style={[styles.resendButton, isResendDisabled && styles.disabledButton]} onPress={resendOtp} disabled={isResendDisabled}>
-        <Text style={styles.buttonText}>Resend OTP</Text>
+        <Text style={styles.buttonText}>{t('resend_otp')}</Text>
       </TouchableOpacity>
 
       {/* Password Input */}
-      <TextInput style={styles.input} placeholder="Enter Password" secureTextEntry value={password} onChangeText={setPassword} />
+      <TextInput style={styles.input} placeholder={t('password_placeholder')} secureTextEntry value={password} onChangeText={setPassword} />
 
       {/* Confirm Password Input */}
-      <TextInput style={styles.input} placeholder="Confirm Password" secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
+      <TextInput style={styles.input} placeholder={t('confirm_password_placeholder')} secureTextEntry value={confirmPassword} onChangeText={setConfirmPassword} />
 
       {/* Reset Password Button */}
       <TouchableOpacity style={styles.button} onPress={resetPassword}>
-        <Text style={styles.buttonText}>Reset Password</Text>
+        <Text style={styles.buttonText}>{t('reset_password')}</Text>
       </TouchableOpacity>
          <Toast />
     </View>

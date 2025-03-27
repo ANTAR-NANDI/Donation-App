@@ -1,25 +1,39 @@
-// Index.tsx
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import { useTranslation } from 'react-i18next';
+
 const Index = ({ navigation }: any) => {
+  const { t, i18n } = useTranslation(); // Get translation function and i18n instance
+  const [language, setLanguage] = useState('en'); // Default language is 'en'
+
+  const changeLanguage = () => {
+    const newLanguage = language === 'en' ? 'bn' : 'en'; // Toggle between English and Bengali
+    i18n.changeLanguage(newLanguage);
+    setLanguage(newLanguage);  // Update the state to reflect the new language
+  };
+
   return (
     <View style={styles.container}>
       <Image source={require('../../assets/images/topoban.png')} style={styles.logo} />
-      <Text style={styles.welcomeText}>Welcome To</Text>
-      <Text style={styles.subText}>Central Tapoban Ashram</Text>
-      <Text style={styles.title}>Registration App</Text>
-            <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.loginButton}>
-                <Text style={styles.loginText}>Log In</Text>
-            </TouchableOpacity>
-     
-        <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.registerButton}>
-          <Text style={styles.registerText}>Register</Text>
-        </TouchableOpacity>
+      <Text style={styles.welcomeText}>{t('welcome')}</Text>
+      <Text style={styles.subText}>{t('subText')}</Text>
+      <Text style={styles.title}>{t('title')}</Text>
+      
+      <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.loginButton}>
+        <Text style={styles.loginText}>{t('login')}</Text>
+      </TouchableOpacity>
 
-      <Text style={styles.languageToggle}>🌐 Eng/বাংলা</Text>
+      <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.registerButton}>
+        <Text style={styles.registerText}>{t('register')}</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity onPress={changeLanguage}>
+        <Text style={styles.languageToggle}>{t('languageToggle')}</Text>
+      </TouchableOpacity>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -59,7 +73,7 @@ const styles = StyleSheet.create({
   loginText: {
     fontSize: 18,
     color: '#4D2600',
-    alignItems:'center',
+    alignItems: 'center',
     fontWeight: 'bold',
   },
   registerButton: {

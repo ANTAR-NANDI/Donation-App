@@ -3,7 +3,9 @@ import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "reac
 import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import BASE_URL from "../../config";
+import { useTranslation } from 'react-i18next';
 export default function ForgotPassword({ navigation }) {
+  const { t, i18n } = useTranslation();
   const [phone, setPhone] = useState("");
  const [error, setError] = useState({});
  const validateForm = () => {
@@ -46,13 +48,13 @@ export default function ForgotPassword({ navigation }) {
       <Image source={require("../../assets/images/topoban.png")} style={styles.logo} />
 
       {/* Title */}
-      <Text style={styles.title}>Forgot Password</Text>
-      <Text style={styles.subtitle}>We will send a link to reset your password</Text>
+      <Text style={styles.title}>{t('forget_password_form')}</Text>
+      <Text style={styles.subtitle}>{t('forget_password_heading')}</Text>
 
       {/* Email Input */}
       <TextInput
         style={styles.input}
-        placeholder="Enter Mobile Number"
+        placeholder={t('phone_placeholder')}
         placeholderTextColor="#5a3d31"
         value={phone}
         onChangeText={setPhone}
@@ -61,12 +63,12 @@ export default function ForgotPassword({ navigation }) {
 
       {/* Submit Button */}
       <TouchableOpacity style={styles.button} onPress={sendOTP}>
-        <Text style={styles.buttonText}>Get OTP</Text>
+        <Text style={styles.buttonText}>{t('send_otp')}</Text>
       </TouchableOpacity>
 
       {/* Sign In Link */}
       <TouchableOpacity  onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.signInText}>Sign in</Text>
+        <Text style={styles.signInText}>{t('signin')}</Text>
       </TouchableOpacity>
          <Toast />
     </View>

@@ -5,7 +5,9 @@ import axios from 'axios';
 import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from "../../config";
+import { useTranslation } from 'react-i18next';
 const RegistrationScreen = ({ navigation }: any) => {
+  const { t, i18n } = useTranslation();
   // State to store form inputs
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -77,22 +79,22 @@ const RegistrationScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Registration Form</Text>
+      <Text style={styles.heading}>{t('register_form')}</Text>
 
-      <Text style={styles.label}>Name *</Text>
+      <Text style={styles.label}>{t('name')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Name"
+        placeholder={t('name_placeholder')}
         placeholderTextColor="#4D2600"
         value={name}
         onChangeText={setName}
       />
       {renderError('username')}
 
-      <Text style={styles.label}>Email *</Text>
+      <Text style={styles.label}>{t('email')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Email"
+        placeholder={t('email_placeholder')}
         placeholderTextColor="#4D2600"
         value={email}
         onChangeText={setEmail}
@@ -105,10 +107,10 @@ const RegistrationScreen = ({ navigation }: any) => {
 
       
 
-      <Text style={styles.label}>Phone Number *</Text>
+      <Text style={styles.label}>{t('phone')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Phone Number"
+        placeholder={t('phone_placeholder')}
         placeholderTextColor="#4D2600"
         value={phone}
         onChangeText={setPhone}
@@ -116,10 +118,10 @@ const RegistrationScreen = ({ navigation }: any) => {
       />
       {renderError('phone')}
 
-      <Text style={styles.label}>Password *</Text>
+      <Text style={styles.label}>{t('password')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Password"   
+        placeholder={t('password_placeholder')} 
         placeholderTextColor="#4D2600"
         value={password}
         onChangeText={setPassword}
@@ -127,10 +129,10 @@ const RegistrationScreen = ({ navigation }: any) => {
       />
       {renderError('password')}
 
-      <Text style={styles.label}>Confirm Password *</Text>
+      <Text style={styles.label}>{t('confirm_password')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Confirm Password"
+        placeholder={t('confirm_password_placeholder')}
         placeholderTextColor="#4D2600"
         value={confirmPassword}
         onChangeText={setConfirmPassword}
@@ -139,12 +141,12 @@ const RegistrationScreen = ({ navigation }: any) => {
       {renderError('password')}
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Register</Text>
+        <Text style={styles.buttonText}>{t('register')}</Text>
       </TouchableOpacity>
 
       
         <TouchableOpacity onPress={() => navigation.navigate('Login')} style={styles.backButton}>
-          <Text style={styles.buttonText}>Back</Text>
+          <Text style={styles.buttonText}>{t('back')}</Text>
         </TouchableOpacity>
 
        <Toast />

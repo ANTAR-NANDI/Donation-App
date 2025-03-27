@@ -1,9 +1,13 @@
-import React, { useState,useEffect } from 'react';
+// RootStackNavigator.js or App.js
+import React, { useState, useEffect } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
-import { TouchableOpacity,Button } from 'react-native';
+import { TouchableOpacity } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { I18nextProvider } from 'react-i18next'; // Import I18nextProvider
+import i18n from '../../i18n'; // Import the i18n configuration
 import HomeScreen from '../screens/HomeScreen';
 import DetailsScreen from '../screens/MemberRegistrationScreen';
 import ProfileScreen from '../screens/ProfileScreen';
@@ -15,7 +19,6 @@ import NotificationScreen from '../screens/NotificationScreen';
 import ChatScreen from '../screens/ChatScreen';
 import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
 import LogoutScreen from '../screens/LogoutScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 import PronamiScreen from '../screens/PronamiScreen';
 import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
@@ -54,22 +57,20 @@ const DashboardStackNavigator = ({ navigation }) => (
 
 // Stack Navigator for the Notification section
 const NotificationStackNavigator = ({ navigation }) => (
-  
-    <Stack.Navigator>
-      
-      <Stack.Screen 
-        name="Notification" 
-        component={NotificationScreen} 
-        options={getScreenOptions(navigation, 'Home')} 
-      />
-      <Stack.Screen 
-        name="NotificationDetail" 
-        component={NotificationDetailsScreen} 
-        options={{ title: 'Notification Details' }} 
-      />
-      
-    </Stack.Navigator>
+  <Stack.Navigator>
+    <Stack.Screen 
+      name="Notification" 
+      component={NotificationScreen} 
+      options={getScreenOptions(navigation, 'Home')} 
+    />
+    <Stack.Screen 
+      name="NotificationDetail" 
+      component={NotificationDetailsScreen} 
+      options={{ title: 'Notification Details' }} 
+    />
+  </Stack.Navigator>
 );
+
 // Bottom Tab Navigator
 const TabNavigator = ({ navigation }) => (
   <Tab.Navigator>
@@ -79,7 +80,7 @@ const TabNavigator = ({ navigation }) => (
       options={{
         headerShown: false,
         ...getScreenOptions(navigation, 'Dashboard'),
-        tabBarIcon: ({ color, size }) => <Ionicons  name="home-outline" size={size} color={color} />,
+        tabBarIcon: ({ color, size }) => <Ionicons name="home-outline" size={size} color={color} />,
       }}
     />
     <Tab.Screen
@@ -101,7 +102,6 @@ const TabNavigator = ({ navigation }) => (
     <Tab.Screen
       name="Notifications"
       component={NotificationStackNavigator}
-      
       options={{
         headerShown: false,
         ...getScreenOptions(navigation, 'Notifications'),
@@ -112,7 +112,6 @@ const TabNavigator = ({ navigation }) => (
       name="Profile"
       component={ProfileScreen}
       options={{
-        
         ...getScreenOptions(navigation, 'Profile'),
         tabBarIcon: ({ color, size }) => <Ionicons name="person-outline" size={size} color={color} />,
       }}
@@ -121,12 +120,12 @@ const TabNavigator = ({ navigation }) => (
 );
 
 const handleLogout = async () => {
-    console.log("press")
-  };
+  console.log("press");
+};
+
 // Drawer Navigator
 const DrawerNavigator = () => (
- <Drawer.Navigator>
-    {/* Dashboard Tab */}
+  <Drawer.Navigator>
     <Drawer.Screen 
       name="Dashboard" 
       component={TabNavigator} 
@@ -135,8 +134,6 @@ const DrawerNavigator = () => (
         drawerIcon: () => <Ionicons name="home-outline" size={24} color="black" />,
       }} 
     />
-    
-    {/* Profile Screen */}
     <Drawer.Screen 
       name="Profile" 
       component={ProfileScreen} 
@@ -144,8 +141,6 @@ const DrawerNavigator = () => (
         drawerIcon: () => <Ionicons name="person-outline" size={24} color="black" />,
       }} 
     />
-    
-    {/* Chat Screen */}
     <Drawer.Screen 
       name="Chat" 
       component={ChatScreen} 
@@ -153,8 +148,6 @@ const DrawerNavigator = () => (
         drawerIcon: () => <Ionicons name="chatbubbles-outline" size={24} color="black" />,
       }} 
     />
-    
-    {/* News Screen */}
     <Drawer.Screen 
       name="News" 
       component={NotificationScreen} 
@@ -162,8 +155,6 @@ const DrawerNavigator = () => (
         drawerIcon: () => <Ionicons name="notifications-outline" size={24} color="black" />,
       }} 
     />
-    
-    {/* Donation Screen */}
     <Drawer.Screen 
       name="Pronami" 
       component={PronamiScreen} 
@@ -171,16 +162,14 @@ const DrawerNavigator = () => (
         drawerIcon: () => <Ionicons name="heart-outline" size={24} color="black" />,
       }} 
     />
-    
-    {/* Logout Screen */}
     <Drawer.Screen 
-  name="Logout" 
-  component={LogoutScreen}  // This now directly shows the LogoutScreen with the modal
-  options={{
-    headerShown: false,
-    drawerIcon: () => <Ionicons name="log-out-outline" size={24} color="black" />,
-  }} 
-/>
+      name="Logout" 
+      component={LogoutScreen}
+      options={{
+        headerShown: false,
+        drawerIcon: () => <Ionicons name="log-out-outline" size={24} color="black" />,
+      }} 
+    />
   </Drawer.Navigator>
 );
 
@@ -214,14 +203,15 @@ const RootStackNavigator = () => {
   }
 
   return (
-    <NotificationProvider>
-    <Stack.Navigator initialRouteName={isAuthenticated ? 'App' : 'Auth'}>
-      <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
-      <Stack.Screen name="App" component={DrawerNavigator} options={{ headerShown: false }} />
-    </Stack.Navigator>
-    </NotificationProvider>
+    <I18nextProvider i18n={i18n}> {/* Wrap your navigator with I18nextProvider */}
+      <NotificationProvider>
+        <Stack.Navigator initialRouteName={isAuthenticated ? 'App' : 'Auth'}>
+          <Stack.Screen name="Auth" component={AuthStack} options={{ headerShown: false }} />
+          <Stack.Screen name="App" component={DrawerNavigator} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NotificationProvider>
+    </I18nextProvider>
   );
 };
-
 
 export default RootStackNavigator;

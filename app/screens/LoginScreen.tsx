@@ -5,7 +5,9 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from "../../config";
+import { useTranslation } from 'react-i18next';
 const LoginScreen = ({ navigation }: any) => {
+  const { t, i18n } = useTranslation();
   const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState({});
@@ -70,22 +72,22 @@ const LoginScreen = ({ navigation }: any) => {
 
   return (
      <View style={styles.container}>
-      <Text style={styles.heading}>Sign In</Text>
+      <Text style={styles.heading}>{t('login')}</Text>
 
-      <Text style={styles.label}>Phone Number *</Text>
+      <Text style={styles.label}>{t('phone')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Phone Number"
+        placeholder={t('phone_placeholder')}
         placeholderTextColor="#4D2600"
         value={phone}
         onChangeText={setPhone}
       />
       {renderError('phone')}
 
-      <Text style={styles.label}>Password *</Text>
+      <Text style={styles.label}>{t('password')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Password"
+        placeholder={t('password_placeholder')}
         placeholderTextColor="#4D2600"
         value={password}
         onChangeText={setPassword}
@@ -94,14 +96,14 @@ const LoginScreen = ({ navigation }: any) => {
       {renderError('password')}
 
       <TouchableOpacity style={styles.registerButton} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Sign In</Text>
+        <Text style={styles.buttonText}>{t('login')}</Text>
       </TouchableOpacity>
 
         <TouchableOpacity onPress={() => navigation.navigate('Register')} style={styles.backButton}>
-          <Text style={styles.buttonText}>Register</Text>
+          <Text style={styles.buttonText}>{t('register')}</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => navigation.navigate('ForgetPassword')} style={styles.forgotPasswordButton}>
-  <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+  <Text style={styles.forgotPasswordText}>{t('forget_password')}</Text>
 </TouchableOpacity>
 
       <Toast />
