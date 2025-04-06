@@ -3,8 +3,10 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView 
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import BASE_URL from "../../config";
+import { useTranslation } from 'react-i18next';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function MemberRegistrationScreen() {
+  const { t, i18n } = useTranslation();
   const [father_name, setFatherName] = useState('');
   const [mother_name, setMotherName] = useState('');
   const [permanent_address, setPermanentAddress] = useState('');
@@ -62,53 +64,53 @@ export default function MemberRegistrationScreen() {
   return (
     <View>
       <ScrollView contentContainerStyle={styles.formContainer}>
-              <Text style={styles.formTitle}>Registration Form</Text>
+              <Text style={styles.formTitle}>{t('register_form')}</Text>
 
-              <Text style={styles.label}>Fathers Name *</Text>
+              <Text style={styles.label}>{t('father_name')} *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter Your Father Name"
+                placeholder={t('father_name_placeholder')}
                 placeholderTextColor="#4D2600"
                 value={father_name}
                 onChangeText={setFatherName}
               />
 
-              <Text style={styles.label}>Mothers Name *</Text>
+              <Text style={styles.label}>{t('mother_name')} *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter Your Mother Name"
+                placeholder={t('mother_name_placeholder')}
                 placeholderTextColor="#4D2600"
                 value={mother_name}
                 onChangeText={setMotherName}
               />
 
-                <Text style={styles.label}>Present Address *</Text>
+                <Text style={styles.label}>{t('present_address')} *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter Your Present Address"
+                placeholder={t('present_address_placeholder')}
                 placeholderTextColor="#4D2600"
                 value={present_address}
                 onChangeText={setPresentAddress}
               />
-              <Text style={styles.label}>Permanent Address *</Text>
+              <Text style={styles.label}>{t('permanent_address')} *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter Your Permanent Address"
+                placeholder={t('permanent_address_placeholder')}
                 placeholderTextColor="#4D2600"
                 value={permanent_address}
                 onChangeText={setPermanentAddress}
               />
-              <Text style={styles.label}>Date of Birth *</Text>
+              <Text style={styles.label}>{t('dob')} *</Text>
               <TextInput
                 style={styles.input}
-                placeholder="Enter Your Date of Birth"
+                placeholder={t('dob_placeholder')}
                 placeholderTextColor="#4D2600"
                 value={date_of_birth}
                 onChangeText={setDateofBirth}
               />
 
               <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-                <Text style={styles.buttonText}>Register</Text>
+                <Text style={styles.buttonText}>{t('register')}</Text>
               </TouchableOpacity>
             </ScrollView>
                 <Toast />

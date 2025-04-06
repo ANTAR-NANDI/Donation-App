@@ -24,7 +24,6 @@ const NotificationDetailScreen = ({ route }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response)
         setNotification(response.data.news);
       } catch (error) {
         setError("Failed to load notification details");
@@ -34,7 +33,6 @@ const NotificationDetailScreen = ({ route }) => {
     fetchNotificationDetails();
   }, [id]);
 
-  console.log("Notification ID:", id);
 
   return (
     <ScrollView>

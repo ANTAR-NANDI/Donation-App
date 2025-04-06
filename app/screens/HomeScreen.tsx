@@ -1,15 +1,16 @@
 import React from 'react';
 import { View, Text, TextInput, Image, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
 import { Card, Avatar } from 'react-native-paper';
-
+import { useTranslation } from 'react-i18next';
 const HomeScreen = ({ navigation }: any) => {
+  const { t, i18n } = useTranslation();
   return (
     // <View>
     //   <Text>Home Screen</Text>
     //   <Button title="Go to Details" onPress={() => navigation.navigate('Details')} />
     // </View>
      <View style={styles.container}>
-      <Text style={styles.header}>Welcome to Central Tapoban Ashram</Text>
+      <Text style={styles.header}>{t('dashboard_heading')}</Text>
 
       {/* Add Image Here */}
       <Image source={require('../../assets/images/dashboard.jpg')} style={styles.image} />
@@ -20,7 +21,7 @@ const HomeScreen = ({ navigation }: any) => {
           <View style={styles.iconContainer}>
             <Avatar.Icon size={40} icon="clipboard-text" style={styles.icon} />
           </View>
-          <Text style={styles.footerText}>শিষ্য নিবন্ধন করতে ক্লিক করুন</Text>
+          <Text style={styles.footerText}>{t('devotee_registration')}</Text>
         </Card>
       </TouchableOpacity>
     </View>

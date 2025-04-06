@@ -4,7 +4,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Toast from 'react-native-toast-message';
 import BASE_URL from '@/config';
+import { useTranslation } from 'react-i18next';
 const ChatScreen = ({ navigation }) => {
+  const { t, i18n } = useTranslation();
     const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState('');
@@ -69,7 +71,7 @@ const handleRegister = async () => {
     <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <ScrollView contentContainerStyle={styles.chatContainer}>
         {loading ? (
-          <Text style={styles.loadingText}>Loading messages...</Text>
+          <Text style={styles.loadingText}>{t('loading_message')}</Text>
         ) : (
           messages.length > 0 ? (
             messages.map((item, index) => (
@@ -83,7 +85,7 @@ const handleRegister = async () => {
               </View>
             ))
           ) : (
-            <Text style={styles.noMessagesText}>No messages available</Text>
+            <Text style={styles.noMessagesText}>{t('no_message')}</Text>
           )
         )}
       </ScrollView>
@@ -93,11 +95,11 @@ const handleRegister = async () => {
         <TextInput
           value={message}
           onChangeText={setMessage}
-          placeholder="Type your message..."
+          placeholder={t('enter_message')}
           style={styles.input}
         />
         <TouchableOpacity style={styles.sendButton} onPress={handleRegister}>
-          <Text style={styles.sendButtonText} >Send</Text>
+          <Text style={styles.sendButtonText} >{t('send')}</Text>
         </TouchableOpacity>
       </View>
     </KeyboardAvoidingView>

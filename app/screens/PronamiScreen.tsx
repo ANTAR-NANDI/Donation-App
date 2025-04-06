@@ -5,7 +5,9 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNPickerSelect from 'react-native-picker-select';
 import BASE_URL from '@/config';
+import { useTranslation } from 'react-i18next';
 const PronamiScreen = ({ navigation }: any) => {
+    const { t, i18n } = useTranslation();
   // State to store form inputs
   const [name, setName] = useState('');
   const [relation, setRelation] = useState('Choose Relation');
@@ -70,15 +72,15 @@ const PronamiScreen = ({ navigation }: any) => {
     <View style={styles.container}>
       <Image source={require('../../assets/images/donation.png')} style={styles.logo} />
 
-      <Text style={styles.label}>Donar Name *</Text>
+      <Text style={styles.label}>{t('donar_name')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Name"
+        placeholder={t('donar_name_placeholder')}
         placeholderTextColor="#4D2600"
         value={name}
         onChangeText={setName}
       />
-       <Text style={styles.label}>Relationship *</Text>
+       <Text style={styles.label}>{t('relationship')} *</Text>
       <View style={styles.pickerContainer}>
         <RNPickerSelect
           onValueChange={(value) => setRelation(value)}
@@ -100,17 +102,17 @@ const PronamiScreen = ({ navigation }: any) => {
           useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
         />
       </View>
-      <Text style={styles.label}>Amount *</Text>
+      <Text style={styles.label}>{t('amount')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Donation Amount"
+        placeholder={t('amount_placeholder')}
         placeholderTextColor="#4D2600"
         value={amount}
         onChangeText={setAmount}
         keyboardType="numeric"
       />
 
-      <Text style={styles.label}>Category *</Text>
+      <Text style={styles.label}>{t('category')} *</Text>
       <View style={styles.pickerContainer}>
         <RNPickerSelect
           onValueChange={(value) => setCategory(value)}
@@ -131,10 +133,10 @@ const PronamiScreen = ({ navigation }: any) => {
           useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
         />
       </View>
-      <Text style={styles.label}>Monthly Amount *</Text>
+      <Text style={styles.label}>{t('monthly_amount')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Donation Amount"
+        placeholder={t('monthly_amount_placeholder')}
         placeholderTextColor="#4D2600"
         value={monthly_amount}
         onChangeText={setMonthlyAmount}
@@ -142,7 +144,7 @@ const PronamiScreen = ({ navigation }: any) => {
       />
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Add</Text>
+        <Text style={styles.buttonText}>{t('add')}</Text>
       </TouchableOpacity>
 
       <Toast />

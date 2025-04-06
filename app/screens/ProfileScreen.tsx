@@ -7,7 +7,9 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from "../../config";
+import { useTranslation } from 'react-i18next';
 const MemberRegistrationForm = ({ navigation }) => {
+  const { t, i18n } = useTranslation();
   const [name, setName] = useState("");
   const [father_name, setFatherName] = useState("");
   const [mother_name, setMotherName] = useState("");
@@ -142,21 +144,21 @@ const fetchUserData = async () => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Member's Profile</Text>
 
-      <TextInput style={styles.input} placeholder="Full Name" value={name} onChangeText={setName} />
-      <TextInput style={styles.input} placeholder="Father's Name" value={father_name} onChangeText={setFatherName} />
-      <TextInput style={styles.input} placeholder="Mother's Name" value={mother_name} onChangeText={setMotherName} />
-      <TextInput style={styles.input} placeholder="Phone Number" keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
-      <TextInput style={styles.input} placeholder="NID Number" keyboardType="numeric" value={nid} onChangeText={setNid} />
-      <TextInput style={styles.input} placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} />
-      <TextInput style={styles.input} placeholder="Occupation" value={occupation} onChangeText={setOccupation} />
-      <TextInput style={styles.input} placeholder="Nationality" value={nationality} onChangeText={setNationality} />
-      <TextInput style={styles.input} placeholder="Date of Birth (YYYY-MM-DD)" value={date_of_birth} onChangeText={setDateOfBirth} />
-      <TextInput style={styles.input} placeholder="Blood Group" value={blood} onChangeText={setBlood} />
-      <TextInput style={styles.input} placeholder="Present Address" value={present_address} onChangeText={setPresentAddress} />
-      <TextInput style={styles.input} placeholder="Permanent Address" value={permanent_address} onChangeText={setPermanentAddress} />
+      <TextInput style={styles.input} placeholder={t('name_placeholder')} value={name} onChangeText={setName} />
+      <TextInput style={styles.input} placeholder={t('father_name_placeholder')} value={father_name} onChangeText={setFatherName} />
+      <TextInput style={styles.input} placeholder={t('mother_name_placeholder')} value={mother_name} onChangeText={setMotherName} />
+      <TextInput style={styles.input} placeholder={t('phone_placeholder')} keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
+      <TextInput style={styles.input} placeholder={t('nid_placeholder')} keyboardType="numeric" value={nid} onChangeText={setNid} />
+      <TextInput style={styles.input} placeholder={t('email_placeholder')} keyboardType="email-address" value={email} onChangeText={setEmail} />
+      <TextInput style={styles.input} placeholder={t('occupation_placeholder')} value={occupation} onChangeText={setOccupation} />
+      <TextInput style={styles.input} placeholder={t('nationality_placeholder')} value={nationality} onChangeText={setNationality} />
+      <TextInput style={styles.input} placeholder={t('dob_placeholder')} value={date_of_birth} onChangeText={setDateOfBirth} />
+      <TextInput style={styles.input} placeholder={t('blood_placeholder')} value={blood} onChangeText={setBlood} />
+      <TextInput style={styles.input} placeholder={t('present_address_placeholder')} value={present_address} onChangeText={setPresentAddress} />
+      <TextInput style={styles.input} placeholder={t('permanent_address_placeholder')} value={permanent_address} onChangeText={setPermanentAddress} />
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-        <Text style={styles.buttonText}>Update Data</Text>
+        <Text style={styles.buttonText}>{t('update_data')}</Text>
       </TouchableOpacity>
       <Toast />
     </ScrollView>

@@ -6,7 +6,9 @@ import Toast from 'react-native-toast-message';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import RNPickerSelect from 'react-native-picker-select';
 import BASE_URL from '@/config';
+import { useTranslation } from 'react-i18next';
 const DonationScreen = ({ navigation }: any) => {
+    const { t, i18n } = useTranslation();
   // State to store form inputs
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -56,28 +58,28 @@ const DonationScreen = ({ navigation }: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.heading}>Donation Form</Text>
+      <Text style={styles.heading}>{t('donation_form')}</Text>
 
-      <Text style={styles.label}>Name *</Text>
+      <Text style={styles.label}>{t('name')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Your Name"
+        placeholder={t('name_placeholder')}
         placeholderTextColor="#4D2600"
         value={name}
         onChangeText={setName}
       />
 
-      <Text style={styles.label}>Donation Amount *</Text>
+      <Text style={styles.label}>{t('donation_amount')} *</Text>
       <TextInput
         style={styles.input}
-        placeholder="Enter Donation Amount"
+        placeholder={t('donation_amount_placeholder')}
         placeholderTextColor="#4D2600"
         value={amount}
         onChangeText={setAmount}
         keyboardType="numeric"
       />
 
-      <Text style={styles.label}>Select a Payment Method *</Text>
+      <Text style={styles.label}>{t('select_payment_method')} *</Text>
       <View style={styles.pickerContainer}>
         <RNPickerSelect
           onValueChange={(value) => setPaymentMethod(value)}
@@ -101,7 +103,7 @@ const DonationScreen = ({ navigation }: any) => {
       {method && <Text style={styles.selectedText}>Selected: {method}</Text>}
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>Donate</Text>
+        <Text style={styles.buttonText}>{t('donate')}</Text>
       </TouchableOpacity>
 
       <Toast />
