@@ -1,59 +1,68 @@
-import React, { useState,useEffect } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, Modal } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, UIManager, findNodeHandle } from 'react-native';
 import { Ionicons, MaterialIcons, Entypo } from '@expo/vector-icons';
-import { Card, Avatar } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import BASE_URL from "../../config";
 import { useTranslation } from 'react-i18next';
-// const devotees = [
-//   { id: 1, name: 'D', relation: 'father', status: 'De-active' },
-//   { id: 2, name: 'ANTAR NANDI', relation: 'himself', status: 'Active' },
-//   { id: 3, name: 'Y', relation: 'mother', status: 'Active' },
-//   { id: 4, name: 'X Talukder', relation: 'father', status: 'Active' },
-// ];
-
 
 const AllDevoteesScreen = ({ navigation }: any) => {
-      const [devotees, setDevotees] = useState([]);
-        const [error, setError] = useState(null);
-      const { t, i18n } = useTranslation();
-  const [dropdownVisible, setDropdownVisible] = useState<number | null>(null);
+  const [devotees, setDevotees] = useState([]);
+  const [error, setError] = useState(null);
+  const { t } = useTranslation();
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [dropdownPosition, setDropdownPosition] = useState({ x: 0, y: 0 });
+  const [selectedDevoteeId, setSelectedDevoteeId] = useState<number | null>(null);
+  const actionButtonRefs = useRef<Record<number, any>>({});
+
+  useEffect(() => {
+    const fetchDevotees = async () => {
+      try {
+        const token = await AsyncStorage.getItem("@auth_token");
+        if (!token) {
+          console.error("No token found");
+          return;
+        }
+
+        const response = await axios.get(`${BASE_URL}/get_devotees`, {
+          headers: {
+            Accept: "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const arrayData = Object.values(response.data.devotees);
+        setDevotees(arrayData || []);
+      } catch (error) {
+        setError("Failed to load Devotees");
+      }
+    };
+
+    fetchDevotees();
+  }, []);
 
   const toggleDropdown = (id: number) => {
-    setDropdownVisible(dropdownVisible === id ? null : id);
+    const ref = actionButtonRefs.current[id];
+
+    if (!ref) return;
+
+    if (dropdownVisible && selectedDevoteeId === id) {
+      setDropdownVisible(false);
+      setSelectedDevoteeId(null);
+      return;
+    }
+
+    UIManager.measure(findNodeHandle(ref), (x, y, width, height, pageX, pageY) => {
+      setDropdownPosition({ x: pageX, y: pageY -height });
+      setSelectedDevoteeId(id);
+      setDropdownVisible(true);
+    });
   };
 
-   useEffect(() => {
-      const fetchDevotees = async () => {
-        try {
-          const token = await AsyncStorage.getItem("@auth_token");
-          if (!token) {
-            console.error("No token found");
-            return;
-          }
-  
-          const response = await axios.get(`${BASE_URL}/get_devotees`, {
-            headers: {
-              Accept: "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          const arrayData = Object.values(response.data.devotees);
-          setDevotees(arrayData || []); 
-        } catch (error) {
-          setError("Failed to load Devotees");
-        }
-      };
-  
-      fetchDevotees();
-    }, []);
-
-  const renderStatusBadge = (status: string) => {
-    const isActive = status ;
+  const renderStatusBadge = (approved: boolean) => {
     return (
-      <View style={[styles.statusBadge, { backgroundColor: isActive ? '#4CAF50' : '#FFC107' }]}>
-        <Text style={styles.statusText}>{status? "Active" : "Inactive"}</Text>
+      <View style={[styles.statusBadge, { backgroundColor: approved ? '#4CAF50' : '#FFC107' }]}>
+        <Text style={styles.statusText}>{approved ? 'Active' : 'Inactive'}</Text>
       </View>
     );
   };
@@ -64,26 +73,14 @@ const AllDevoteesScreen = ({ navigation }: any) => {
       <View style={styles.cell}><Text>{item.relation}</Text></View>
       <View style={styles.cell}>{renderStatusBadge(item.approved)}</View>
       <View style={styles.cell}>
-        <TouchableOpacity onPress={() => toggleDropdown(item.id)} style={styles.actionButton}>
+        <TouchableOpacity
+          ref={(ref) => (actionButtonRefs.current[item.id] = ref)}
+          onPress={() => toggleDropdown(item.id)}
+          style={styles.actionButton}
+        >
           <Text style={styles.actionText}>Action</Text>
           <Entypo name="chevron-down" size={16} color="#4D2600" />
         </TouchableOpacity>
-        {dropdownVisible === item.id && (
-          <View style={styles.dropdown}>
-            <TouchableOpacity style={styles.option}>
-              <Ionicons name="eye" size={18} color="#4D2600" style={styles.icon} />
-              <Text style={styles.optionText}>Description</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.option}>
-              <MaterialIcons name="edit" size={18} color="#4D2600" style={styles.icon} />
-              <Text style={styles.optionText}>Edit</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.option}>
-              <MaterialIcons name="delete-outline" size={18} color="#4D2600" style={styles.icon} />
-              <Text style={styles.optionText}>Delete</Text>
-            </TouchableOpacity>
-          </View>
-        )}
       </View>
     </View>
   );
@@ -93,14 +90,12 @@ const AllDevoteesScreen = ({ navigation }: any) => {
       <View style={styles.headerRow}>
         <Text style={styles.title}>All Devotees</Text>
         <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('MemberRegistration')}>
-        
           <Text style={styles.addButtonText}>{t('devotee_registration')}</Text>
-        
-      </TouchableOpacity>
+        </TouchableOpacity>
       </View>
 
       <View style={styles.tableHeader}>
-        {[ 'Name', 'Relation', 'Status', 'Action'].map((header, index) => (
+        {['Name', 'Relation', 'Status', 'Action'].map((header, index) => (
           <View style={styles.cell} key={index}>
             <Text style={styles.headerText}>{header}</Text>
           </View>
@@ -112,12 +107,29 @@ const AllDevoteesScreen = ({ navigation }: any) => {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
       />
+
+      {dropdownVisible && (
+        <View style={[styles.dropdown, { top: dropdownPosition.y, left: dropdownPosition.x }]}>
+          <TouchableOpacity style={styles.option}>
+            <Ionicons name="eye" size={18} color="#4D2600" style={styles.icon} />
+            <Text style={styles.optionText}>Description</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.option}>
+            <MaterialIcons name="edit" size={18} color="#4D2600" style={styles.icon} />
+            <Text style={styles.optionText}>Edit</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.option}>
+            <MaterialIcons name="delete-outline" size={18} color="#4D2600" style={styles.icon} />
+            <Text style={styles.optionText}>Delete</Text>
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-     addButton: {
+  addButton: {
     backgroundColor: '#B71C1C',
     paddingVertical: 8,
     paddingHorizontal: 8,
@@ -143,7 +155,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#4D2600',
   },
-
   tableHeader: {
     flexDirection: 'row',
     backgroundColor: '#f8e6b2',
@@ -192,13 +203,12 @@ const styles = StyleSheet.create({
   },
   dropdown: {
     position: 'absolute',
-    top: 40,
-    left: 0,
     backgroundColor: '#D5C295',
     borderRadius: 10,
     padding: 10,
-    zIndex: 999,
-    elevation: 5,
+    zIndex: 1000,
+    elevation: 10,
+    width: 180,
   },
   option: {
     flexDirection: 'row',
