@@ -16,7 +16,7 @@ const HomeScreen = ({ navigation }: any) => {
       <Image source={require('../../assets/images/dashboard.jpg')} style={styles.image} />
 
       {/* Card Button to Open Modal */}
-      <TouchableOpacity onPress={() => navigation.navigate('MemberRegistration')}>
+      <TouchableOpacity  onPress={() => navigation.navigate('MemberRegistration')}>
         <Card style={styles.footerCard}>
           <View style={styles.iconContainer}>
             <Avatar.Icon size={40} icon="clipboard-text" style={styles.icon} />

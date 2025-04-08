@@ -21,6 +21,7 @@ import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
 import LogoutScreen from '../screens/LogoutScreen';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 import PronamiScreen from '../screens/PronamiScreen';
+import DevoteeScreen from '../screens/DevoteeScreen';
 import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import NotificationProvider from '../screens/Notification-Provider';
@@ -50,7 +51,8 @@ const DashboardStackNavigator = ({ navigation }) => (
     <Stack.Screen 
       name="MemberRegistration" 
       component={MemberRegistrationScreen} 
-      options={{ title: 'Member Registration' }} 
+      // options={{ title: 'Member Registration' }}
+      options={getScreenOptions(navigation, 'MemberRegistration')}  
     />
   </Stack.Navigator>
 );
@@ -119,10 +121,6 @@ const TabNavigator = ({ navigation }) => (
   </Tab.Navigator>
 );
 
-const handleLogout = async () => {
-  console.log("press");
-};
-
 // Drawer Navigator
 const DrawerNavigator = () => (
   <Drawer.Navigator>
@@ -160,6 +158,13 @@ const DrawerNavigator = () => (
       component={PronamiScreen} 
       options={{
         drawerIcon: () => <Ionicons name="heart-outline" size={24} color="black" />,
+      }} 
+    />
+    <Drawer.Screen 
+      name="Devotees" 
+      component={DevoteeScreen} 
+      options={{
+        drawerIcon: () => <Ionicons name="person-outline" size={24} color="black" />,
       }} 
     />
     <Drawer.Screen 
