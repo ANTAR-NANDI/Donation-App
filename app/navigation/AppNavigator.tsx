@@ -22,6 +22,7 @@ import LogoutScreen from '../screens/LogoutScreen';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 import PronamiScreen from '../screens/PronamiScreen';
 import DevoteeScreen from '../screens/DevoteeScreen';
+import DevoteeDetailScreen from '../screens/DevoteeDetailScreen';
 import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import NotificationProvider from '../screens/Notification-Provider';
@@ -56,7 +57,17 @@ const DashboardStackNavigator = ({ navigation }) => (
     />
   </Stack.Navigator>
 );
-
+const DevoteeStackNavigator = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="AllDevotees" component={DevoteeScreen} options={{ title: 'All Devotees' }} />
+    <Stack.Screen  name="DevoteeDetail" component={DevoteeDetailScreen} 
+    options={{
+        headerShown: false
+      }} 
+    />
+    {/* <Stack.Screen name="EditDevotee" component={DevoteeEditScreen} options={{ title: 'Edit Devotee' }} /> */}
+  </Stack.Navigator>
+);
 // Stack Navigator for the Notification section
 const NotificationStackNavigator = ({ navigation }) => (
   <Stack.Navigator>
@@ -162,7 +173,7 @@ const DrawerNavigator = () => (
     />
     <Drawer.Screen 
       name="Devotees" 
-      component={DevoteeScreen} 
+      component={DevoteeStackNavigator} 
       options={{
         drawerIcon: () => <Ionicons name="person-outline" size={24} color="black" />,
       }} 

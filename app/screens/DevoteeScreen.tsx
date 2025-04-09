@@ -53,7 +53,7 @@ const AllDevoteesScreen = ({ navigation }: any) => {
     }
 
     UIManager.measure(findNodeHandle(ref), (x, y, width, height, pageX, pageY) => {
-      setDropdownPosition({ x: pageX, y: pageY -height });
+      setDropdownPosition({ x: pageX, y: pageY - height });
       setSelectedDevoteeId(id);
       setDropdownVisible(true);
     });
@@ -61,10 +61,13 @@ const AllDevoteesScreen = ({ navigation }: any) => {
 
   const renderStatusBadge = (approved: boolean) => {
     return (
-      <View style={[styles.statusBadge, { backgroundColor: approved ? '#4CAF50' : '#FFC107' }]}>
+      <View style={[styles.statusBadge, { backgroundColor: approved ? '#4CAF50' : '#FFC107' }]} >
         <Text style={styles.statusText}>{approved ? 'Active' : 'Inactive'}</Text>
       </View>
     );
+  };
+   const handleDevoteeViewDetails = (id) => {
+    navigation.navigate('DevoteeDetail', { id: id });
   };
 
   const renderItem = ({ item }: any) => (
@@ -110,9 +113,9 @@ const AllDevoteesScreen = ({ navigation }: any) => {
 
       {dropdownVisible && (
         <View style={[styles.dropdown, { top: dropdownPosition.y, left: dropdownPosition.x }]}>
-          <TouchableOpacity style={styles.option}>
+          <TouchableOpacity style={styles.option} onPress={() => handleDevoteeViewDetails(selectedDevoteeId!)}>
             <Ionicons name="eye" size={18} color="#4D2600" style={styles.icon} />
-            <Text style={styles.optionText}>Description</Text>
+            <Text style={styles.optionText}>View</Text>
           </TouchableOpacity>
           <TouchableOpacity style={styles.option}>
             <MaterialIcons name="edit" size={18} color="#4D2600" style={styles.icon} />
@@ -127,7 +130,6 @@ const AllDevoteesScreen = ({ navigation }: any) => {
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   addButton: {
     backgroundColor: '#B71C1C',
