@@ -4,14 +4,18 @@ import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import BASE_URL from "../../config";
 import { useTranslation } from 'react-i18next';
+import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-export default function MemberRegistrationScreen() {
+const MemberRegistrationScreen = ({ navigation }: any) => {
   const { t, i18n } = useTranslation();
+    const [name, setName] = useState('');
   const [father_name, setFatherName] = useState('');
   const [mother_name, setMotherName] = useState('');
   const [permanent_address, setPermanentAddress] = useState('');
   const [present_address, setPresentAddress] = useState('');
   const [date_of_birth, setDateofBirth] = useState('');
+  const [reference_number, setReferenceNumber] = useState('');
+    const [relation, setRelation] = useState(null);
   const validateForm = () => {
       if (!father_name.trim()) {
         Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Father Name is required.' });
@@ -40,23 +44,27 @@ export default function MemberRegistrationScreen() {
     if (!validateForm()) return
     try {
       
-            const response = await axios.post(`${BASE_URL}/update_profile`, 
+            const response = await axios.post(`${BASE_URL}/add_devotee`, 
               { 
+              name,
+              relation,
               father_name,
               mother_name,
               present_address,
               permanent_address,
-              date_of_birth
+              date_of_birth,
+              reference_number
              },
               {
                 headers: {
                   Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
-                  "Content-Type": "application/json", // Ensure correct content type
+                  "Content-Type": "application/json",
                 },
                });
-               console.log(response);
-              Toast.show({ type: 'success', text1: 'Successful', text2: 'Data Updated Successfully !' });
-
+              Toast.show({ type: 'success', text1: 'Successful', text2: response.data.message });
+               setTimeout(() => {
+                  navigation.replace('App');
+                }, 1000);
           } catch (error) {
             Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
           }
@@ -66,7 +74,37 @@ export default function MemberRegistrationScreen() {
       <ScrollView contentContainerStyle={styles.formContainer}>
               <Text style={styles.formTitle}>{t('register_form')}</Text>
 
-              <Text style={styles.label}>{t('father_name')} *</Text>
+        <Text style={styles.label}>Select Relation *</Text>
+      <View style={styles.pickerContainer}>
+        <RNPickerSelect
+          onValueChange={(value) => setRelation(value)}
+          items={[
+            { label: 'Father', value: 'father' },
+            { label: 'Mother', value: 'mother' },
+            { label: 'Wife', value: 'wife' },
+            { label: 'Child', value: 'child' },
+            { label: 'Himself', value: 'himself' },
+          ]}
+          style={{
+            ...pickerSelectStyles,
+            iconContainer: {
+              top: 12,
+              right: 12,
+            },
+          }}
+          placeholder={{ label: 'Choose Relation', value: null }}
+          useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
+        />
+      </View>
+             <Text style={styles.label}>{t('name')} *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder={t('name_placeholder')}
+                placeholderTextColor="#4D2600"
+                value={name}
+                onChangeText={setName}
+              />
+              <Text style={styles.label}>{t('father_name')} / Husband's Name*</Text>
               <TextInput
                 style={styles.input}
                 placeholder={t('father_name_placeholder')}
@@ -108,6 +146,14 @@ export default function MemberRegistrationScreen() {
                 value={date_of_birth}
                 onChangeText={setDateofBirth}
               />
+               <Text style={styles.label}>Registered Reference Number *</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Registered Reference Number"
+                placeholderTextColor="#4D2600"
+                value={reference_number}
+                onChangeText={setReferenceNumber}
+              />
 
               <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
                 <Text style={styles.buttonText}>{t('register')}</Text>
@@ -117,7 +163,36 @@ export default function MemberRegistrationScreen() {
     </View>
   )
 }
+const pickerSelectStyles = {
+  inputIOS: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderWidth: 0, // Removed the border
+    borderRadius: 25,
+    backgroundColor: '#FFF',
+    color: '#4D2600',
+    paddingRight: 30, // Prevents text from cutting off
+  },
+  inputAndroid: {
+    fontSize: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 15,
+    borderWidth: 0, // Removed the border
+    borderRadius: 25,
+    backgroundColor: '#FFF',
+    color: '#4D2600',
+    paddingRight: 30, // Prevents text from cutting off
+  },
+};
 const styles = StyleSheet.create({
+   pickerContainer: {
+    borderRadius: 25,
+    backgroundColor: '#FFF',
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    marginBottom: 15,
+  },
   container: {
     flex: 1,
     alignItems: 'center',
@@ -209,3 +284,4 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
 });
+export default MemberRegistrationScreen;
