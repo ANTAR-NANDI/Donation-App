@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, UIManager, findNodeHandle } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, UIManager, findNodeHandle, Alert } from 'react-native';
 import { Ionicons, MaterialIcons, Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
@@ -66,9 +66,43 @@ const AllDevoteesScreen = ({ navigation }: any) => {
       </View>
     );
   };
-   const handleDevoteeViewDetails = (id) => {
+
+  const handleDevoteeViewDetails = (id) => {
     navigation.navigate('DevoteeDetail', { id: id });
   };
+
+  const handleDeleteDevotee = async (id: number) => {
+        try {
+          const token = await AsyncStorage.getItem("@auth_token");
+          if (!token) {
+            console.error("No token found");
+            return;
+          }
+
+          // Correct API endpoint for deleting devotee
+          const response = await axios.delete(`${BASE_URL}/delete_devotee/${id}`, {
+            headers: {
+              Accept: "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          });
+
+          // Check API response
+          console.log("Delete response:", response.data);
+
+          // Update local state after deletion
+          setDevotees((prevDevotees) => prevDevotees.filter(devotee => devotee.id !== id));
+          setDropdownVisible(false);
+          setSelectedDevoteeId(null);
+
+          // Optionally, show a success alert
+          Alert.alert("Success", "Devotee deleted successfully.");
+        } catch (error) {
+          console.error("Error deleting devotee:", error);
+          setError("Failed to delete Devotee");
+          Alert.alert("Error", "Failed to delete devotee. Please try again.");
+        }
+  }
 
   const renderItem = ({ item }: any) => (
     <View style={styles.row}>
@@ -121,7 +155,7 @@ const AllDevoteesScreen = ({ navigation }: any) => {
             <MaterialIcons name="edit" size={18} color="#4D2600" style={styles.icon} />
             <Text style={styles.optionText}>Edit</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.option}>
+          <TouchableOpacity style={styles.option} onPress={() => handleDeleteDevotee(selectedDevoteeId!)}>
             <MaterialIcons name="delete-outline" size={18} color="#4D2600" style={styles.icon} />
             <Text style={styles.optionText}>Delete</Text>
           </TouchableOpacity>
@@ -130,6 +164,7 @@ const AllDevoteesScreen = ({ navigation }: any) => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   addButton: {
     backgroundColor: '#B71C1C',
