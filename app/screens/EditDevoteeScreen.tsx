@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, ActivityIndicator } from 'react-native';
+import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, ActivityIndicator,ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from '../../config';
@@ -65,7 +65,7 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
         return;
       }
 
-      const response = await axios.put(
+      const response = await axios.post(
         `${BASE_URL}/update_devotee/${id}`,
         {
           name: devoteeName,
@@ -74,8 +74,8 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
           mothers_name: devoteeMother,
           present_address: devoteePresentAddress,
           permanent_address: devoteePermanentAddress,
-          dob: devoteeDateofBirth,
-          registerd_rf_number: devoteeReferenceNumber,
+          date_of_birth: devoteeDateofBirth,
+          reference_number: devoteeReferenceNumber,
         },
         {
           headers: {
@@ -84,8 +84,8 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
           },
         }
       );
-
-      if (response.status === 200) {
+       console.log(response);
+      if (response.data.status === true) {
         Alert.alert('Success', 'Devotee updated successfully');
         navigation.goBack();  // Navigate back to the previous screen
       } else {
@@ -136,6 +136,7 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
   });
 
   return (
+    <ScrollView>
     <View style={styles.container}>
       <Text style={styles.title}>Edit Devotee</Text>
       <Text style={styles.label}>Select Relation *</Text>
@@ -216,6 +217,7 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
         <Text style={styles.buttonText}>{loading ? 'Updating...' : 'Update'}</Text>
       </TouchableOpacity>
     </View>
+   </ScrollView>
   );
 };
 

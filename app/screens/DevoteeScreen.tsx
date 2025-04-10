@@ -130,7 +130,7 @@ const handleEditDevotee = (id: number) => {
       <View style={styles.headerRow}>
         <Text style={styles.title}>All Devotees</Text>
         <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('MemberRegistration')}>
-          <Text style={styles.addButtonText}>{t('devotee_registration')}</Text>
+          <Text style={styles.addButtonText}>Add Devotee</Text>
         </TouchableOpacity>
       </View>
 
@@ -173,7 +173,7 @@ const handleEditDevotee = (id: number) => {
 
 const styles = StyleSheet.create({
   addButton: {
-    backgroundColor: '#B71C1C',
+    backgroundColor: '#4cff33',
     paddingVertical: 8,
     paddingHorizontal: 8,
     borderRadius: 8,

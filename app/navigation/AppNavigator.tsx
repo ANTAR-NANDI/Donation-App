@@ -58,7 +58,7 @@ const DashboardStackNavigator = ({ navigation }) => (
     />
   </Stack.Navigator>
 );
-const DevoteeStackNavigator = () => (
+const DevoteeStackNavigator = ({navigation}) => (
   <Stack.Navigator>
     <Stack.Screen name="AllDevotees" component={DevoteeScreen} options={{ title: 'All Devotees' }} />
     <Stack.Screen  name="DevoteeDetail" component={DevoteeDetailScreen} 
@@ -69,6 +69,14 @@ const DevoteeStackNavigator = () => (
     <Stack.Screen  options={{
         headerShown: false
       }}   name="EditDevotee"  component={EditDevoteeScreen} />
+       <Stack.Screen 
+      name="MemberRegistration" 
+      component={MemberRegistrationScreen} 
+      // options={{ title: 'Member Registration' }}
+      options={{
+        headerShown: false
+      }}  
+    />
   </Stack.Navigator>
 );
 // Stack Navigator for the Notification section
