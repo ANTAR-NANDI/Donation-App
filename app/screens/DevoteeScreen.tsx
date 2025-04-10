@@ -32,6 +32,7 @@ const AllDevoteesScreen = ({ navigation }: any) => {
         });
 
         const arrayData = Object.values(response.data.devotees);
+        console.log(arrayData)
         setDevotees(arrayData || []);
       } catch (error) {
         setError("Failed to load Devotees");
@@ -103,7 +104,9 @@ const AllDevoteesScreen = ({ navigation }: any) => {
           Alert.alert("Error", "Failed to delete devotee. Please try again.");
         }
   }
-
+const handleEditDevotee = (id: number) => {
+  navigation.navigate('EditDevotee', { id });
+};
   const renderItem = ({ item }: any) => (
     <View style={styles.row}>
       <View style={styles.cell}><Text>{item.name}</Text></View>
@@ -151,10 +154,13 @@ const AllDevoteesScreen = ({ navigation }: any) => {
             <Ionicons name="eye" size={18} color="#4D2600" style={styles.icon} />
             <Text style={styles.optionText}>View</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.option}>
-            <MaterialIcons name="edit" size={18} color="#4D2600" style={styles.icon} />
-            <Text style={styles.optionText}>Edit</Text>
-          </TouchableOpacity>
+          <TouchableOpacity
+  style={styles.option}
+  onPress={() => handleEditDevotee(selectedDevoteeId!)}  // Pass only the id here
+>
+  <MaterialIcons name="edit" size={18} color="#4D2600" style={styles.icon} />
+  <Text style={styles.optionText}>Edit</Text>
+</TouchableOpacity>
           <TouchableOpacity style={styles.option} onPress={() => handleDeleteDevotee(selectedDevoteeId!)}>
             <MaterialIcons name="delete-outline" size={18} color="#4D2600" style={styles.icon} />
             <Text style={styles.optionText}>Delete</Text>

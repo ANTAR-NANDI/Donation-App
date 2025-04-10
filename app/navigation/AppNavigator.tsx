@@ -26,6 +26,7 @@ import DevoteeDetailScreen from '../screens/DevoteeDetailScreen';
 import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
 import ResetPasswordScreen from '../screens/ResetPasswordScreen';
 import NotificationProvider from '../screens/Notification-Provider';
+import EditDevoteeScreen from '../screens/EditDevoteeScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -65,7 +66,9 @@ const DevoteeStackNavigator = () => (
         headerShown: false
       }} 
     />
-    {/* <Stack.Screen name="EditDevotee" component={DevoteeEditScreen} options={{ title: 'Edit Devotee' }} /> */}
+    <Stack.Screen  options={{
+        headerShown: false
+      }}   name="EditDevotee"  component={EditDevoteeScreen} />
   </Stack.Navigator>
 );
 // Stack Navigator for the Notification section
