@@ -1,76 +1,113 @@
 import React, { useState } from "react";
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet } from "react-native";
-import axios from 'axios';
-import Toast from 'react-native-toast-message';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  Image,
+  StyleSheet,
+} from "react-native";
+import axios from "axios";
+import Toast from "react-native-toast-message";
 import BASE_URL from "../../config";
-import { useTranslation } from 'react-i18next';
+import { useTranslation } from "react-i18next";
+
 export default function ForgotPassword({ navigation }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [phone, setPhone] = useState("");
- const [error, setError] = useState({});
- const validateForm = () => {
-     if (!phone.trim()) {
-       Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Enter Your Phone Number.' });
-       return false;
-     }
-     return true;
-   };
+  const [errorMessages, setErrorMessages] = useState({});
+
+  const validateForm = () => {
+    if (!phone.trim()) {
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Enter Your Phone Number.",
+      });
+      return false;
+    }
+    return true;
+  };
+
   const renderError = (field) => {
-        return error?.response?.data?.errors?.[field]?.map((errMsg, index) => (
-          <Text key={index} style={styles.errorText}>{errMsg}</Text>
-        ));
-      };
+    return errorMessages?.[field]?.map((msg, idx) => (
+      <Text key={idx} style={styles.errorText}>
+        {msg}
+      </Text>
+    ));
+  };
+
   const sendOTP = async () => {
     if (!validateForm()) return;
 
     try {
       const response = await axios.post(`${BASE_URL}/member/send_otp`, {
-        phone
+        phone,
       });
-      if(response.data.status)
-      {
-         Toast.show({ type: 'success', text1: 'Successful', text2: 'OTP has been sent !' });
+
+      if (response.data.status) {
+        Toast.show({
+          type: "success",
+          text1: "Successful",
+          text2: "OTP has been sent!",
+        });
+
         setTimeout(() => {
-            // navigation.replace('ResetPassword');
-            navigation.replace('ResetPassword', { phone: phone });
+          navigation.replace("ResetPassword", { phone });
         }, 500);
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: response.data.message || "Something went wrong.",
+        });
       }
-        
     } catch (error) {
-      console.log(error)
-      setError(error)
+      console.log("Error sending OTP:", error?.response?.data || error);
+      if (error.response?.status === 422) {
+        // Validation error from backend
+        setErrorMessages(error.response.data.errors || {});
+      } else {
+        Toast.show({
+          type: "error",
+          text1: "Error",
+          text2: "Failed to send OTP. Try again.",
+        });
+      }
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Logo */}
-      <Image source={require("../../assets/images/topoban.png")} style={styles.logo} />
+      <Image
+        source={require("../../assets/images/topoban.png")}
+        style={styles.logo}
+      />
+      <Text style={styles.title}>{t("forget_password_form")}</Text>
+      <Text style={styles.subtitle}>{t("forget_password_heading")}</Text>
 
-      {/* Title */}
-      <Text style={styles.title}>{t('forget_password_form')}</Text>
-      <Text style={styles.subtitle}>{t('forget_password_heading')}</Text>
-
-      {/* Email Input */}
       <TextInput
         style={styles.input}
-        placeholder={t('phone_placeholder')}
+        placeholder={t("phone_placeholder")}
         placeholderTextColor="#5a3d31"
         value={phone}
-        onChangeText={setPhone}
+        onChangeText={(text) => {
+          setPhone(text);
+          setErrorMessages({}); // Clear previous errors on change
+        }}
+        keyboardType="phone-pad"
       />
-      {renderError('phone')}
+      {renderError("phone")}
 
-      {/* Submit Button */}
       <TouchableOpacity style={styles.button} onPress={sendOTP}>
-        <Text style={styles.buttonText}>{t('send_otp')}</Text>
+        <Text style={styles.buttonText}>{t("send_otp")}</Text>
       </TouchableOpacity>
 
-      {/* Sign In Link */}
-      <TouchableOpacity  onPress={() => navigation.navigate("Login")}>
-        <Text style={styles.signInText}>{t('signin')}</Text>
+      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+        <Text style={styles.signInText}>{t("signin")}</Text>
       </TouchableOpacity>
-         <Toast />
+
+      <Toast />
     </View>
   );
 }
@@ -109,7 +146,12 @@ const styles = StyleSheet.create({
     backgroundColor: "#f4e4c3",
     color: "#5a3d31",
     fontSize: 16,
-    marginBottom: 15,
+    marginBottom: 5,
+  },
+  errorText: {
+    color: "#b00020",
+    fontSize: 14,
+    marginBottom: 10,
   },
   button: {
     width: "100%",
@@ -118,6 +160,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: "center",
     marginBottom: 20,
+    marginTop: 10,
   },
   buttonText: {
     color: "#f4e4c3",

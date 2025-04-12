@@ -43,7 +43,7 @@ const LoginScreen = ({ navigation }: any) => {
       console.log(response.data)
       if(response.data.status == false)
       {
-        Toast.show({ type: 'error', text1: 'Failed', text2: 'Your account is inactive. Contact support !' });
+        Toast.show({ type: 'error', text1: 'Failed', text2: response.data.message });
       }
       else{
           const { token, user } = response.data;
