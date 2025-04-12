@@ -1,242 +1,181 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image } from 'react-native';
-import axios from 'axios';
-import Toast from 'react-native-toast-message';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, ScrollView,TouchableOpacity } from 'react-native';
+import { Button } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNPickerSelect from 'react-native-picker-select';
-import BASE_URL from '@/config';
-import { useTranslation } from 'react-i18next';
-const PronamiScreen = ({ navigation }: any) => {
-    const { t, i18n } = useTranslation();
-  // State to store form inputs
-  const [name, setName] = useState('');
-  const [relation, setRelation] = useState('Choose Relation');
-  const [amount, setAmount] = useState(0);
-  const [category, setCategory] = useState('Choose a Category');
-  const [monthly_amount, setMonthlyAmount] = useState('');
+import axios from 'axios';
+import BASE_URL from "../../config";
+import { Ionicons } from '@expo/vector-icons';
 
-  // Form validation
-  const validateForm = () => {
-    if (!name.trim()) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Name is required.' });
-      return false;
+const PronamiTable= ({ navigation }: any) => {
+  const [pronamisGrouped, setPronamisGrouped] = useState({});
+  const [error, setError] = useState(null);
+
+  const fetchPronamis = async () => {
+    try {
+      const token = await AsyncStorage.getItem("@auth_token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      const response = await axios.get(`${BASE_URL}/get_pronamis`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const rawData = response.data.pronami;
+
+      // Flatten and group by relation
+      const flattened = Object.entries(rawData).flatMap(([relation, items]) =>
+        items.map(item => ({
+          relation: relation.charAt(0).toUpperCase() + relation.slice(1),
+          name: item.devotee_name,
+          month: item.month,
+          year: item.year,
+          amount: item.amount,
+        }))
+      );
+
+      const grouped = flattened.reduce((acc, curr) => {
+        if (!acc[curr.relation]) acc[curr.relation] = [];
+        acc[curr.relation].push(curr);
+        return acc;
+      }, {});
+
+      setPronamisGrouped(grouped);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to load Pronamis");
     }
-    if (!relation.trim()) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Relation is required.' });
-      return false;
-    }
-    if (!amount) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please Enter an Amount.' });
-      return false;
-    }
-    if (!category) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please Enter Category.' });
-      return false;
-    }
-    if (!monthly_amount) {
-      Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Please Enter Monthly Amount.' });
-      return false;
-    }
-    return true;
   };
 
-  // Handle registration logic
-  const handleRegister = async () => {
-    if (!validateForm()) return;
-     try {
-      
-            const response = await axios.post(`${BASE_URL}/pronami_store`, 
-              { 
-             name,
-             relation,
-             amount, 
-             category,
-             monthly_amount
-             },
-              {
-                headers: {
-                  Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
-                  "Content-Type": "application/json", // Ensure correct content type
-                },
-               });
-              Toast.show({ type: 'success', text1: 'Success', text2: 'আপনার প্রণামী যুক্ত হয়েছে!' });
-              navigation.replace('App');
+  useEffect(() => {
+    fetchPronamis();
+  }, []);
 
-          } catch (error) {
-            console.log(error);
-            Toast.show({ type: 'error', text1: 'Validation Error', text2: error.response.data.error });
-          }
-  };
+  const total = Object.values(pronamisGrouped).flat().reduce((sum, item) => sum + Number(item.amount), 0);
 
   return (
-    <View style={styles.container}>
-      <Image source={require('../../assets/images/donation.png')} style={styles.logo} />
+    <ScrollView contentContainerStyle={styles.container}>
+              <TouchableOpacity style={styles.addButton} onPress={() => navigation.navigate('AddPronami')}>
+                <Text style={styles.addButtonText}>Add Pronami</Text>
+              </TouchableOpacity>
 
-      <Text style={styles.label}>{t('donar_name')} *</Text>
-      <TextInput
-        style={styles.input}
-        placeholder={t('donar_name_placeholder')}
-        placeholderTextColor="#4D2600"
-        value={name}
-        onChangeText={setName}
-      />
-       <Text style={styles.label}>{t('relationship')} *</Text>
-      <View style={styles.pickerContainer}>
-        <RNPickerSelect
-          onValueChange={(value) => setRelation(value)}
-          items={[
-            { label: 'Himself', value: 'himself' },
-            { label: 'Father', value: 'father' },
-            { label: 'Mother', value: 'mother' },
-            { label: 'Wife', value: 'wife' },
-            { label: 'Child', value: 'child' }
-          ]}
-          style={{
-            ...pickerSelectStyles,
-            iconContainer: {
-              top: 12,
-              right: 12,
-            },
-          }}
-          placeholder={{ label: 'Choose a Relation', value: null }}
-          useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
-        />
+      <View style={styles.table}>
+        <View style={[styles.row, styles.header]}>
+          <Text style={styles.cell}>Relation</Text>
+          <Text style={styles.cell}>Name</Text>
+          <Text style={styles.cell}>Month</Text>
+          <Text style={styles.cell}>Year</Text>
+          <Text style={styles.cell}>Monthly Pronami</Text>
+        </View>
+
+        {Object.entries(pronamisGrouped).map(([relation, items], relIdx) => (
+          <React.Fragment key={relIdx}>
+            <View style={[styles.row, { backgroundColor: '#fff4d1' }]} >
+              <Text style={[styles.cell, styles.bold]}>{relation.toUpperCase()}</Text>
+              <Text style={styles.cell}></Text>
+              <Text style={styles.cell}></Text>
+              <Text style={styles.cell}></Text>
+              <Text style={styles.cell}></Text>
+            </View>
+
+            {items.map((item, index) => (
+              <View style={styles.row} key={index}>
+                <Text style={styles.cell}></Text>
+                <Text style={styles.cell}>{item.name}</Text>
+                <Text style={styles.cell}>{item.month}</Text>
+                <Text style={styles.cell}>{item.year}</Text>
+                <Text style={styles.cell}>{item.amount}</Text>
+              </View>
+            ))}
+          </React.Fragment>
+        ))}
+
+        <View style={[styles.row, styles.footer]}>
+          <Text style={styles.cell}></Text>
+          <Text style={styles.cell}></Text>
+          <Text style={styles.cell}></Text>
+          <Text style={[styles.cell, styles.bold]}>Total Pronami:</Text>
+          <Text style={[styles.cell, styles.bold]}>{total} Taka</Text>
+        </View>
       </View>
-      <Text style={styles.label}>{t('amount')} *</Text>
-      <TextInput
-        style={styles.input}
-        placeholder={t('amount_placeholder')}
-        placeholderTextColor="#4D2600"
-        value={amount}
-        onChangeText={setAmount}
-        keyboardType="numeric"
-      />
-
-      <Text style={styles.label}>{t('category')} *</Text>
-      <View style={styles.pickerContainer}>
-        <RNPickerSelect
-          onValueChange={(value) => setCategory(value)}
-          items={[
-            { label: 'Daily', value: 'daily' },
-            { label: 'Weekly', value: 'weekly' },
-            { label: 'Monthly', value: 'monthly' },
-            { label: 'Yearly', value: 'yearly' },
-          ]}
-          style={{
-            ...pickerSelectStyles,
-            iconContainer: {
-              top: 12,
-              right: 12,
-            },
-          }}
-          placeholder={{ label: 'Choose a Category', value: null }}
-          useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
-        />
-      </View>
-      <Text style={styles.label}>{t('monthly_amount')} *</Text>
-      <TextInput
-        style={styles.input}
-        placeholder={t('monthly_amount_placeholder')}
-        placeholderTextColor="#4D2600"
-        value={monthly_amount}
-        onChangeText={setMonthlyAmount}
-        keyboardType="numeric"
-      />
-
-      <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-        <Text style={styles.buttonText}>{t('add')}</Text>
-      </TouchableOpacity>
-
-      <Toast />
-    </View>
+    </ScrollView>
   );
 };
 
+export default PronamiTable;
+
 const styles = StyleSheet.create({
-    logo: {
-    width: 100,
-    height: 100,
-    alignSelf: 'center',
-    marginBottom: 20,
+  addButton: {
+    backgroundColor: '#ff7433',
+    paddingVertical: 8,
+    width:100,
+    margin:20,
+    paddingHorizontal: 8,
+    borderRadius: 8,
+  },
+  addButtonText: {
+    color: 'black',
+    fontWeight: 'bold',
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '70%', // Make the container full width
+    marginBottom: 10,
+  },
+
+  refreshButton: {
+    flex: 1, // Ensure the button takes available space
+    alignSelf: 'center', // Center the button vertically
+    paddingHorizontal: 10,
+    paddingVertical: 0,
+    borderColor: '#c62828',
+    borderWidth: 1,
+    height: 50,
+    marginLeft: 20,
   },
   container: {
+    backgroundColor: '#e0c68e',
+    padding: 16,
+    flexGrow: 1,
+  },
+  button: {
+    alignSelf: 'flex-start',
+    marginBottom: 10,
+  },
+  table: {
+    backgroundColor: '#f8b75d',
+    borderRadius: 8,
+    padding: 5,
+  },
+  row: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderColor: '#e4a548',
+    paddingVertical: 6,
+  },
+  header: {
+    backgroundColor: '#ffc971',
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  footer: {
+    backgroundColor: '#fcdca5',
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+  },
+  cell: {
     flex: 1,
-    backgroundColor: '#D5C295',
-    padding: 20,
-    justifyContent: 'center',
-  },
-  heading: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 13,
     textAlign: 'center',
-    marginBottom: 70,
-    color: '#4D2600',
+    color: '#5b2d00',
   },
-  label: {
-    fontSize: 16,
+  bold: {
     fontWeight: 'bold',
-    color: '#4D2600',
-    marginBottom: 5,
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: '#4D2600',
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    fontSize: 16,
-    color: '#4D2600',
-    marginBottom: 15,
-    backgroundColor: '#FFF',
-  },
-  pickerContainer: {
-    borderRadius: 25,
-    backgroundColor: '#FFF',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginBottom: 15,
-  },
-  selectedText: {
-    marginTop: 10,
-    fontSize: 16,
-    fontWeight: 'bold',
-    color: '#4D2600',
-  },
-  registerButton: {
-    backgroundColor: '#4D2600',
-    paddingVertical: 12,
-    borderRadius: 25,
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  buttonText: {
-    fontSize: 18,
-    color: '#FFFFFF',
-    fontWeight: 'bold',
+    color: '#a10000',
   },
 });
-
-const pickerSelectStyles = {
-  inputIOS: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    borderWidth: 0, // Removed the border
-    borderRadius: 25,
-    backgroundColor: '#FFF',
-    color: '#4D2600',
-    paddingRight: 30, // Prevents text from cutting off
-  },
-  inputAndroid: {
-    fontSize: 16,
-    paddingVertical: 12,
-    paddingHorizontal: 15,
-    borderWidth: 0, // Removed the border
-    borderRadius: 25,
-    backgroundColor: '#FFF',
-    color: '#4D2600',
-    paddingRight: 30, // Prevents text from cutting off
-  },
-};
-
-export default PronamiScreen;

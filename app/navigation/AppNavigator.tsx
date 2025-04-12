@@ -21,6 +21,7 @@ import MemberRegistrationScreen from '../screens/MemberRegistrationScreen';
 import LogoutScreen from '../screens/LogoutScreen';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
 import PronamiScreen from '../screens/PronamiScreen';
+import AddPronamiScreen from '../screens/AddPronamiScreen';
 import DevoteeScreen from '../screens/DevoteeScreen';
 import DevoteeDetailScreen from '../screens/DevoteeDetailScreen';
 import ForgetPasswordScreen from '../screens/ForgetPasswordScreen';
@@ -73,6 +74,18 @@ const DevoteeStackNavigator = ({navigation}) => (
       name="MemberRegistration" 
       component={MemberRegistrationScreen} 
       // options={{ title: 'Member Registration' }}
+      options={{
+        headerShown: false
+      }}  
+    />
+  </Stack.Navigator>
+);
+const PronamiStackNavigator = ({navigation}) => (
+  <Stack.Navigator>
+    <Stack.Screen name="AllPronamis" component={PronamiScreen} options={{ title: 'All Pronamis' }} />
+       <Stack.Screen 
+      name="AddPronami" 
+      component={AddPronamiScreen} 
       options={{
         headerShown: false
       }}  
@@ -177,7 +190,7 @@ const DrawerNavigator = () => (
     />
     <Drawer.Screen 
       name="Pronami" 
-      component={PronamiScreen} 
+      component={PronamiStackNavigator} 
       options={{
         drawerIcon: () => <Ionicons name="heart-outline" size={24} color="black" />,
       }} 
