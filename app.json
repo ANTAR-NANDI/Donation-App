@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "Donation-App",
-    "slug": "Donation-App",
+    "slug": "donation-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -15,7 +15,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.topoban.donationapp"
     },
     "web": {
       "bundler": "metro",
@@ -43,8 +44,9 @@
         "origin": false
       },
       "eas": {
-        "projectId": "d97c7acf-c3ff-4e31-b8a5-871b422c3cf0"
+        "projectId": "cccc683e-66da-4cb0-9e58-3f476782fa90"
       }
-    }
+    },
+    "owner": "topoban"
   }
 }
