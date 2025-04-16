@@ -12,11 +12,12 @@
       "supportsTablet": true
     },
     "android": {
+      "package": "com.topoban.donationapp",
+      "googleServicesFile": "./app/google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "com.topoban.donationapp"
+      }
     },
     "web": {
       "bundler": "metro",

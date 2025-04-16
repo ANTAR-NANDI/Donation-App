@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "818989069571",
+    "project_id": "donationapp-80ffd",
+    "storage_bucket": "donationapp-80ffd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818989069571:android:d989347a5f1a226b77a536",
+        "android_client_info": {
+          "package_name": "com.topoban.donationapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4Wej4bWNgag1zoZQuPrzIWloloI6kju0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
