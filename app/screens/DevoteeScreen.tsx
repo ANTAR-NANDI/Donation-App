@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect,useCallback , useRef } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet, UIManager, findNodeHandle, Alert } from 'react-native';
 import { Ionicons, MaterialIcons, Entypo } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 import axios from 'axios';
 import BASE_URL from "../../config";
 import { useTranslation } from 'react-i18next';
@@ -15,7 +16,14 @@ const AllDevoteesScreen = ({ navigation }: any) => {
   const [selectedDevoteeId, setSelectedDevoteeId] = useState<number | null>(null);
   const actionButtonRefs = useRef<Record<number, any>>({});
 
-  useEffect(() => {
+useEffect(() => {
+  const unsubscribe = navigation.addListener('focus', () => {
+    fetchDevotees();
+  });
+
+  return unsubscribe;
+}, [navigation]);
+
     const fetchDevotees = async () => {
       try {
         const token = await AsyncStorage.getItem("@auth_token");
@@ -38,9 +46,6 @@ const AllDevoteesScreen = ({ navigation }: any) => {
         setError("Failed to load Devotees");
       }
     };
-
-    fetchDevotees();
-  }, []);
 
   const toggleDropdown = (id: number) => {
     const ref = actionButtonRefs.current[id];

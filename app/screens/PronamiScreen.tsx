@@ -51,9 +51,17 @@ const PronamiTable= ({ navigation }: any) => {
     }
   };
 
+  // useEffect(() => {
+  //   fetchPronamis();
+  // }, []);
+
   useEffect(() => {
-    fetchPronamis();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      fetchPronamis();
+    });
+  
+    return unsubscribe;
+  }, [navigation]);
 
   const total = Object.values(pronamisGrouped).flat().reduce((sum, item) => sum + Number(item.amount), 0);
 
