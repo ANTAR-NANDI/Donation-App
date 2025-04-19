@@ -12,7 +12,7 @@ const DonationScreen = ({ navigation }: any) => {
   // State to store form inputs
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
-  const [method, setPaymentMethod] = useState(null);
+  const [method, setPaymentMethod] = useState('');
 
   // Form validation
   const validateForm = () => {
@@ -88,19 +88,10 @@ const DonationScreen = ({ navigation }: any) => {
             { label: 'PayPal', value: 'paypal' },
             { label: 'Bank Transfer', value: 'bank_transfer' },
           ]}
-          style={{
-            ...pickerSelectStyles,
-            iconContainer: {
-              top: 12,
-              right: 12,
-            },
-          }}
-          placeholder={{ label: 'Choose a payment method...', value: null }}
-          useNativeAndroidPickerStyle={false} // Ensures custom styling on Android
         />
       </View>
 
-      {method && <Text style={styles.selectedText}>Selected: {method}</Text>}
+      
 
       <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
         <Text style={styles.buttonText}>{t('donate')}</Text>
