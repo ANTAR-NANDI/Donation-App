@@ -19,6 +19,8 @@ import NotificationScreen from '../screens/NotificationScreen';
 import ChatScreen from '../screens/ChatScreen';
 import LogoutScreen from '../screens/LogoutScreen';
 import NotificationDetailsScreen from '../screens/NotificationDetailsScreen';
+import NewsDetailScreen from '../screens/NewsDetailsScreen';
+import NewsScreen from '../screens/NewsScreen';
 import PronamiScreen from '../screens/PronamiScreen';
 import AddPronamiScreen from '../screens/AddPronamiScreen';
 import DevoteeScreen from '../screens/DevoteeScreen';
@@ -61,6 +63,14 @@ const PronamiStackNavigator = ({ navigation }) => (
   <Stack.Navigator>
     <Stack.Screen name="AllPronamis" component={PronamiScreen} options={{ title: 'All Pronamis' }} />
     <Stack.Screen name="AddPronami" component={AddPronamiScreen} options={{ headerShown: false }} />
+  </Stack.Navigator>
+);
+
+
+const NewsStackNavigator = ({ navigation }) => (
+  <Stack.Navigator>
+    <Stack.Screen name="News" component={NewsScreen} options={{ title: 'All News' }} />
+    <Stack.Screen name="NewsDetail" component={NewsDetailScreen} options={{ headerShown: false }} />
   </Stack.Navigator>
 );
 
@@ -118,7 +128,7 @@ const DrawerNavigator = () => (
     <Drawer.Screen name="Dashboard" component={TabNavigator} options={{ headerShown: false, drawerIcon: () => <Ionicons name="home-outline" size={24} color="black" /> }} />
     <Drawer.Screen name="Profile" component={ProfileScreen} options={{ drawerIcon: () => <Ionicons name="person-outline" size={24} color="black" /> }} />
     <Drawer.Screen name="Chat" component={ChatScreen} options={{ drawerIcon: () => <Ionicons name="chatbubbles-outline" size={24} color="black" /> }} />
-    <Drawer.Screen name="News" component={NotificationScreen} options={{ drawerIcon: () => <Ionicons name="notifications-outline" size={24} color="black" /> }} />
+    <Drawer.Screen name="News" component={NewsStackNavigator} options={{ drawerIcon: () => <Ionicons name="notifications-outline" size={24} color="black" /> }} />
     <Drawer.Screen name="Pronami" component={PronamiStackNavigator} options={{ drawerIcon: () => <Ionicons name="heart-outline" size={24} color="black" /> }} />
     <Drawer.Screen name="Devotees" component={DevoteeStackNavigator} options={{ drawerIcon: () => <Ionicons name="person-outline" size={24} color="black" /> }} />
     <Drawer.Screen name="Logout" component={LogoutScreen} options={{ headerShown: false, drawerIcon: () => <Ionicons name="log-out-outline" size={24} color="black" /> }} />

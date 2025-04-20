@@ -4,13 +4,13 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from "../../config";
 
-const NotificationDetailScreen = ({ route }) => {
+const NewsDetailScreen = ({ route }) => {
   const { id } = route.params;
-  const [notification, setNotification] = useState(null);
+  const [news, setNews]  = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchNotificationDetails = async () => {
+    const fetchNews = async () => {
       try {
         const token = await AsyncStorage.getItem("@auth_token");
         if (!token) {
@@ -18,29 +18,29 @@ const NotificationDetailScreen = ({ route }) => {
           return;
         }
 
-        const response = await axios.get(`${BASE_URL}/notification-details/${id}`, {
+        const response = await axios.get(`${BASE_URL}/news-details/${id}`, {
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
-        setNotification(response.data.notification);
+        setNews(response.data.news);
       } catch (error) {
         setError("Failed to load notification details");
       }
     };
 
-    fetchNotificationDetails();
+    fetchNews();
   }, [id]);
 
 
   return (
     <ScrollView>
             <View style={styles.container}>
-                {notification ? (
+                {news ? (
                     <>
-                    <Text style={styles.notificationTitle}>{notification.title}</Text>
-                    <Text style={styles.notificationDescription}>{notification.body}</Text>
+                    <Text style={styles.notificationTitle}>{news.title}</Text>
+                    <Text style={styles.notificationDescription}>{news.description}</Text>
                     </>
                 ) : error ? (
                     <Text style={styles.errorText}>{error}</Text>
@@ -86,4 +86,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationDetailScreen;
+export default NewsDetailScreen;

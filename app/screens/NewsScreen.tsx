@@ -4,12 +4,12 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from "../../config";
 
-const NotificationScreen = ({ navigation }) => {
-  const [notifications, setNotifications] = useState([]);
+const NewsScreen = ({ navigation }) => {
+  const [news, setNews] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchNotifications = async () => {
+    const fetchNews = async () => {
       try {
         const token = await AsyncStorage.getItem("@auth_token");
         if (!token) {
@@ -17,43 +17,43 @@ const NotificationScreen = ({ navigation }) => {
           return;
         }
 
-        const response = await axios.get(`${BASE_URL}/notifications`, {
+        const response = await axios.get(`${BASE_URL}/news`, {
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
         });
 
-        setNotifications(response.data.notifications || []); 
+        setNews(response.data.news || []); 
       } catch (error) {
         setError("Failed to load notifications");
       }
     };
 
-    fetchNotifications();
+    fetchNews();
   }, []);
 
   const handleNotificationClick = (notification) => {
-    navigation.navigate('NotificationDetail', { id: notification.id });
+    navigation.navigate('NewsDetail', { id: notification.id });
   };
 
-  const renderNotificationItem = ({ item }) => (
+  const renderNewsItem = ({ item }) => (
     <TouchableOpacity style={styles.notificationItem} onPress={() => handleNotificationClick(item)}>
       <View>
         <Text style={styles.notificationTitle}>{item.title}</Text>
-        <Text style={styles.notificationDescription}>{item.body}</Text>
+        <Text style={styles.notificationDescription}>{item.description}</Text>
       </View>
     </TouchableOpacity>
   );
 
   return (
     <View style={styles.container}>
-      {notifications.length === 0 ? (
+      {news.length === 0 ? (
         <Text style={styles.noNotifications}>No new notifications</Text>
       ) : (
         <FlatList
-          data={notifications}
-          renderItem={renderNotificationItem}
+          data={news}
+          renderItem={renderNewsItem}
           keyExtractor={(item) => item.id.toString()}
         />
       )}
@@ -106,4 +106,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default NotificationScreen;
+export default NewsScreen;
