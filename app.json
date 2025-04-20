@@ -15,7 +15,7 @@
       "package": "com.topoban.donationapp",
       "googleServicesFile": "./app/google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/topoban.png",
         "backgroundColor": "#ffffff"
       }
     },
@@ -29,7 +29,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/topoban.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

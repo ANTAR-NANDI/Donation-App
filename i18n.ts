@@ -58,7 +58,7 @@ const resources = {
       father_name_placeholder : "Enter Your Father's Name",
       mother_name_placeholder : "Enter Your Mother's Name",
        nid_placeholder : "Enter Your NID Number",
-       occupation_placeholder : "Enter Your NID Number",
+       occupation_placeholder : "Enter Your Occupation",
        nationality_placeholder : "Enter Your Nationality",
        dob_placeholder : "Enter Your Date of Birth",
        blood_placeholder : "Enter Your Blood Group",

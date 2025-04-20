@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Modal, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Button, Modal, ScrollView } from 'react-native';
 import Toast from 'react-native-toast-message';
 import axios from 'axios';
 import BASE_URL from "../../config";
 import { useTranslation } from 'react-i18next';
 import RNPickerSelect from 'react-native-picker-select';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import DateTimePicker from '@react-native-community/datetimepicker';
 const MemberRegistrationScreen = ({ navigation }: any) => {
   const { t, i18n } = useTranslation();
     const [name, setName] = useState('');
@@ -16,6 +17,19 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
   const [date_of_birth, setDateofBirth] = useState('');
   const [reference_number, setReferenceNumber] = useState('');
     const [relation, setRelation] = useState(null);
+
+    //
+    const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
+  const handleChange = (event, selectedDate) => {
+    setShowPicker(false); // close the picker
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+  };
+  const formatDate = (date) => {
+    return date.toISOString().split('T')[0];
+  };
   const validateForm = () => {
       if (!father_name.trim()) {
         Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Father Name is required.' });
@@ -29,7 +43,7 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
         Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Permanent Address is required.' });
         return false;
       }
-      if (!date_of_birth.trim()) {
+      if (!date) {
         Toast.show({ type: 'error', text1: 'Validation Error', text2: 'Date of Birth is required.' });
         return false;
       }
@@ -52,7 +66,7 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
               mother_name,
               present_address,
               permanent_address,
-              date_of_birth,
+              date_of_birth:date,
               reference_number
              },
               {
@@ -138,14 +152,17 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
                 value={permanent_address}
                 onChangeText={setPermanentAddress}
               />
-              <Text style={styles.label}>{t('dob')} *</Text>
-              <TextInput
-                style={styles.input}
-                placeholder={t('dob_placeholder')}
-                placeholderTextColor="#4D2600"
-                value={date_of_birth}
-                onChangeText={setDateofBirth}
-              />
+              <Text style={styles.label}>Date of Birth {formatDate(date)}</Text>
+              <Button title="Select Date of Birth" onPress={() => setShowPicker(true)} />
+
+              {showPicker && (
+                <DateTimePicker
+                  value={date}
+                  mode="date"
+                  display="default"
+                  onChange={handleChange}
+                />
+              )}
                <Text style={styles.label}>Registered Reference Number *</Text>
               <TextInput
                 style={styles.input}
@@ -255,6 +272,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
+    marginTop:10,
     color: '#333',
   },
   input: {
