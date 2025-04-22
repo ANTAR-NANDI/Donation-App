@@ -128,8 +128,7 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
 
       const response = await axios.post(`${BASE_URL}/add_devotee`, payload, {
         headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type'
+          Authorization: `Bearer ${token}`
         },
       });
 
