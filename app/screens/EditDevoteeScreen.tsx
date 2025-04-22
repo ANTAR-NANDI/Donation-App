@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Text, StyleSheet, Alert, ActivityIndicator,ScrollView } from 'react-native';
+import { View,Image,Button, TextInput, TouchableOpacity, Text, StyleSheet, Alert, ActivityIndicator,ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import BASE_URL from '../../config';
 import RNPickerSelect from 'react-native-picker-select';
-
+import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from 'expo-image-picker';
+const IMG_URL = "http://192.168.0.174:8000/images/nids";
 const EditDevoteeScreen = ({ route, navigation }: any) => {
   const { id } = route.params;  // Get the id from route params
-
+ const [date, setDate] = useState(new Date());
+  const [showPicker, setShowPicker] = useState(false);
   const [devoteeRelation, setDevoteeRelation] = useState('');
   const [devoteeName, setDevoteeName] = useState('');
   const [devoteeFather, setDevoteeFather] = useState('');
@@ -17,7 +20,44 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
   const [devoteeDateofBirth, setDevoteeDateofBirth] = useState('');
   const [devoteeReferenceNumber, setDevoteeReferenceNumber] = useState('');
   const [loading, setLoading] = useState(true);
+  const [front_image, setFrontImage] = useState(null);
+  const [back_image, setBackImage] = useState(null);
+const handleChange = (event, selectedDate) => {
+    setShowPicker(false);
+    if (selectedDate) {
+      setDate(selectedDate);
+    }
+  };
 
+  const formatDate = (date) => {
+    return date.toISOString().split("T")[0];
+  };
+
+const pickFrontImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setFrontImage(result.assets[0]);
+    }
+  };
+
+  const pickBackImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setBackImage(result.assets[0]);
+    }
+  };
   // Fetch devotee data when the component mounts
   useEffect(() => {
     const fetchDevoteeData = async () => {
@@ -34,7 +74,7 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response);
+        console.log(response.data.devotee.nid_front_image);
         const devoteeData = response.data.devotee;
         setDevoteeRelation(devoteeData.relation);
         setDevoteeName(devoteeData.name);
@@ -44,6 +84,12 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
         setDevoteePermanentAddress(devoteeData.permanent_address);
         setDevoteeDateofBirth(devoteeData.dob);
         setDevoteeReferenceNumber(devoteeData.registerd_rf_number);
+        if (devoteeData.nid_front_image) {
+          setFrontImage({ uri: `${IMG_URL}/${devoteeData.nid_front_image}` });
+        }
+        if (devoteeData.nid_back_image) {
+          setBackImage({ uri: `${IMG_URL}/${devoteeData.nid_back_image}` });
+        }
         setLoading(false);
       } catch (error) {
         console.error('Error fetching devotee data:', error);
@@ -79,7 +125,6 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
         },
         {
           headers: {
-            Accept: 'application/json',
             Authorization: `Bearer ${token}`,
           },
         }
@@ -197,13 +242,37 @@ const EditDevoteeScreen = ({ route, navigation }: any) => {
         onChangeText={setDevoteePermanentAddress}
       />
 
-      <Text style={styles.label}>Date of Birth *</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Enter Date of Birth"
-        value={devoteeDateofBirth}
-        onChangeText={setDevoteeDateofBirth}
-      />
+      <Text>Date of Birth: {formatDate(date)}</Text>
+        <Button title="Select Date of Birth" onPress={() => setShowPicker(true)} />
+        {showPicker && (
+          <DateTimePicker value={date} mode="date" display="default" onChange={handleChange} />
+        )}
+
+        <Text style={styles.label}>Front Image of NID</Text>
+        <TouchableOpacity style={styles.registerButton} onPress={pickFrontImage}>
+          <Text style={styles.buttonText}>Pick Front Image</Text>
+        </TouchableOpacity>
+        {front_image && (
+          <View style={{ alignItems: 'center', marginTop: 10 }}>
+            <Image source={{ uri: front_image.uri }} style={{ width: 200, height: 200 }} />
+            <TouchableOpacity style={styles.removeButton} onPress={() => setFrontImage(null)}>
+              <Text style={styles.removeButtonText}>Remove Front Image</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        <Text style={styles.label}>Back Image of NID</Text>
+        <TouchableOpacity style={styles.registerButton} onPress={pickBackImage}>
+          <Text style={styles.buttonText}>Pick Back Image</Text>
+        </TouchableOpacity>
+        {back_image && (
+          <View style={{ alignItems: 'center', marginTop: 10 }}>
+            <Image source={{ uri: back_image.uri }} style={{ width: 200, height: 200 }} />
+            <TouchableOpacity style={styles.removeButton} onPress={() => setBackImage(null)}>
+              <Text style={styles.removeButtonText}>Remove Back Image</Text>
+            </TouchableOpacity>
+          </View>
+        )}
 
       <Text style={styles.label}>Registered Reference Number *</Text>
       <TextInput
@@ -232,7 +301,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',  // Centers the picker vertically
     paddingHorizontal: 10,     // Padding on the left and right inside the container
   },
-
+ removeButton: {
+    marginTop: 10,
+    backgroundColor: '#b00020',
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    borderRadius: 5,
+  },
+  removeButtonText: {
+    color: '#fff',
+    fontSize: 14,
+  },
   label: {
     fontSize: 16,           // Adjust font size as needed
     fontWeight: '600',       // Gives the label a semi-bold weight
@@ -264,9 +343,16 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginBottom: 20,
   },
+  registerButton: {
+    backgroundColor: '#6200ee',
+    padding: 10,
+    borderRadius: 5,
+    alignItems: 'center',
+    marginTop: 20,
+  },
   buttonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: 'white',
+    fontSize: 16,
   },
   updateButton: {
     height: 50,
