@@ -11,7 +11,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import * as ImagePicker from 'expo-image-picker';
 import * as FileSystem from 'expo-file-system';
 
-const IMG_URL = "http://192.168.0.174:8000/images/nids";
+const IMG_URL = "https://topoban.w3schoolbd.org/images/nids";
 
 const EditDevoteeScreen = ({ route, navigation }: any) => {
   const { id } = route.params;
