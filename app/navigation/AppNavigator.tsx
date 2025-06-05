@@ -1,13 +1,12 @@
-// RootStackNavigator.js or App.js
 import React, { useState, useEffect } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
-import { createDrawerNavigator } from "@react-navigation/drawer";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { I18nextProvider } from "react-i18next";
 import i18n from "../../i18n";
+
 import HomeScreen from "../screens/HomeScreen";
 import MemberRegistrationScreen from "../screens/MemberRegistrationScreen";
 import ProfileScreen from "../screens/ProfileScreen";
@@ -31,24 +30,24 @@ import NotificationProvider from "../screens/Notification-Provider";
 import EditDevoteeScreen from "../screens/EditDevoteeScreen";
 import PaymentDetailsScreen from "../screens/PaymentDetailsScreen";
 import ProfileDropdownMenu from "../screens/ProfileDropdownMenu ";
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const Drawer = createDrawerNavigator();
 
-const getScreenOptions = (navigation, title) => ({
-  title: title,
-  headerLeft: () => (
-    <TouchableOpacity
-      onPress={() => navigation.openDrawer()}
-      style={{ marginLeft: 15 }}
-    >
-      <Ionicons name="menu-outline" size={28} color="black" />
-    </TouchableOpacity>
-  ),
+const defaultStackOptions = ({ navigation }) => ({
+  headerLeft: () =>
+    navigation.canGoBack() ? (
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ marginLeft: 15 }}
+      >
+        <Ionicons name="arrow-back-outline" size={24} color="black" />
+      </TouchableOpacity>
+    ) : null,
 });
 
-const DashboardStackNavigator = ({ navigation }) => (
-  <Stack.Navigator>
+const DashboardStackNavigator = () => (
+  <Stack.Navigator screenOptions={defaultStackOptions}>
     <Stack.Screen
       name="Home"
       component={HomeScreen}
@@ -75,8 +74,8 @@ const DashboardStackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const DevoteeStackNavigator = ({ navigation }) => (
-  <Stack.Navigator>
+const DevoteeStackNavigator = () => (
+  <Stack.Navigator screenOptions={defaultStackOptions}>
     <Stack.Screen
       name="AllDevotees"
       component={DevoteeScreen}
@@ -100,8 +99,8 @@ const DevoteeStackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const NewsStackNavigator = ({ navigation }) => (
-  <Stack.Navigator>
+const NewsStackNavigator = () => (
+  <Stack.Navigator screenOptions={defaultStackOptions}>
     <Stack.Screen
       name="News"
       component={NewsScreen}
@@ -115,12 +114,12 @@ const NewsStackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const NotificationStackNavigator = ({ navigation }) => (
-  <Stack.Navigator>
+const NotificationStackNavigator = () => (
+  <Stack.Navigator screenOptions={defaultStackOptions}>
     <Stack.Screen
       name="Notification"
       component={NotificationScreen}
-      options={getScreenOptions(navigation, "Notifications")}
+      options={{ title: "Notifications" }}
     />
     <Stack.Screen
       name="NotificationDetail"
@@ -129,17 +128,27 @@ const NotificationStackNavigator = ({ navigation }) => (
     />
   </Stack.Navigator>
 );
-const DonationStackNavigator = ({ navigation }) => (
-  <Stack.Navigator>
+
+const DonationStackNavigator = () => (
+  <Stack.Navigator screenOptions={defaultStackOptions}>
     <Stack.Screen
       name="Donation"
       component={DonationScreen}
-      options={getScreenOptions(navigation, "Donation")}
+      options={{ title: "Donation" }}
     />
     <Stack.Screen
       name="DonationDetail"
       component={PaymentDetailsScreen}
       options={{ title: "Payment Details" }}
+    />
+  </Stack.Navigator>
+);
+const ChatStackNavigator = () => (
+  <Stack.Navigator screenOptions={defaultStackOptions}>
+    <Stack.Screen
+      name="Chat"
+      component={ChatScreen}
+      options={{ title: "Chat" }}
     />
   </Stack.Navigator>
 );
@@ -157,7 +166,7 @@ const TabNavigator = () => (
     />
     <Tab.Screen
       name="Chat"
-      component={ChatScreen}
+      component={ChatStackNavigator}
       options={{
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="chatbubbles-outline" size={size} color={color} />
@@ -204,14 +213,13 @@ const TabNavigator = () => (
 );
 
 const AuthStack = () => (
-  <Stack.Navigator initialRouteName="Index">
+  <Stack.Navigator initialRouteName="Index" screenOptions={defaultStackOptions}>
     <Stack.Screen name="Index" component={Index} options={{ title: "Home" }} />
     <Stack.Screen
       name="Login"
       component={LoginScreen}
       options={{ title: "Login" }}
     />
-
     <Stack.Screen
       name="ForgetPassword"
       component={ForgetPasswordScreen}

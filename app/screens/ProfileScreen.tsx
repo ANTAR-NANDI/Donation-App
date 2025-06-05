@@ -72,7 +72,10 @@ const MemberRegistrationForm = ({ navigation }) => {
 
       setUser(response.data);
     } catch (error) {
-      console.error("Error fetching user data:", error.response?.data || error.message);
+      console.error(
+        "Error fetching user data:",
+        error.response?.data || error.message
+      );
     }
   };
 
@@ -98,27 +101,51 @@ const MemberRegistrationForm = ({ navigation }) => {
 
   const validateForm = () => {
     if (!name.trim()) {
-      Toast.show({ type: "error", text1: "Validation Error", text2: "Name is required." });
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Name is required.",
+      });
       return false;
     }
     if (!father_name.trim()) {
-      Toast.show({ type: "error", text1: "Validation Error", text2: "Father Name is required." });
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Father Name is required.",
+      });
       return false;
     }
     if (!mother_name.trim()) {
-      Toast.show({ type: "error", text1: "Validation Error", text2: "Mother Name is required." });
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Mother Name is required.",
+      });
       return false;
     }
     if (!permanent_address.trim()) {
-      Toast.show({ type: "error", text1: "Validation Error", text2: "Permanent Address is required." });
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Permanent Address is required.",
+      });
       return false;
     }
     if (!present_address.trim()) {
-      Toast.show({ type: "error", text1: "Validation Error", text2: "Present Address is required." });
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Present Address is required.",
+      });
       return false;
     }
     if (!date) {
-      Toast.show({ type: "error", text1: "Validation Error", text2: "Date of Birth is required." });
+      Toast.show({
+        type: "error",
+        text1: "Validation Error",
+        text2: "Date of Birth is required.",
+      });
       return false;
     }
     return true;
@@ -145,7 +172,9 @@ const MemberRegistrationForm = ({ navigation }) => {
         },
         {
           headers: {
-            Authorization: `Bearer ${await AsyncStorage.getItem("@auth_token")}`,
+            Authorization: `Bearer ${await AsyncStorage.getItem(
+              "@auth_token"
+            )}`,
             "Content-Type": "application/json",
           },
         }
@@ -153,7 +182,11 @@ const MemberRegistrationForm = ({ navigation }) => {
 
       fetchUserData();
       navigation.replace("App");
-      Toast.show({ type: "success", text1: "Successful", text2: "Data Updated Successfully!" });
+      Toast.show({
+        type: "success",
+        text1: "Successful",
+        text2: "Data Updated Successfully!",
+      });
     } catch (error) {
       console.log(error);
       Toast.show({
@@ -168,17 +201,63 @@ const MemberRegistrationForm = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Member's Profile</Text>
 
-      <TextInput style={styles.input} placeholder={t("name_placeholder")} value={name} onChangeText={setName} />
-      <TextInput style={styles.input} placeholder={t("father_name_placeholder")} value={father_name} onChangeText={setFatherName} />
-      <TextInput style={styles.input} placeholder={t("mother_name_placeholder")} value={mother_name} onChangeText={setMotherName} />
-      <TextInput style={styles.input} placeholder={t("phone_placeholder")} keyboardType="phone-pad" value={phone} onChangeText={setPhone} />
-      <TextInput style={styles.input} placeholder={t("nid_placeholder")} keyboardType="numeric" value={nid} onChangeText={setNid} />
-      <TextInput style={styles.input} placeholder={t("email_placeholder")} keyboardType="email-address" value={email} onChangeText={setEmail} />
-      <TextInput style={styles.input} placeholder={t("occupation_placeholder")} value={occupation} onChangeText={setOccupation} />
-      <TextInput style={styles.input} placeholder={t("nationality_placeholder")} value={nationality} onChangeText={setNationality} />
+      <TextInput
+        style={styles.input}
+        placeholder={t("name_placeholder")}
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("father_name_placeholder")}
+        value={father_name}
+        onChangeText={setFatherName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("mother_name_placeholder")}
+        value={mother_name}
+        onChangeText={setMotherName}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("phone_placeholder")}
+        keyboardType="phone-pad"
+        value={phone}
+        onChangeText={setPhone}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("nid_placeholder")}
+        keyboardType="numeric"
+        value={nid}
+        onChangeText={setNid}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("email_placeholder")}
+        keyboardType="email-address"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("occupation_placeholder")}
+        value={occupation}
+        onChangeText={setOccupation}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("nationality_placeholder")}
+        value={nationality}
+        onChangeText={setNationality}
+      />
 
       <Text>Date of Birth: {formatDate(date)}</Text>
-      <Button title="Select Date of Birth" onPress={() => setShowPicker(true)} />
+      <Button
+        title="Select Date of Birth"
+        onPress={() => setShowPicker(true)}
+      />
 
       {showPicker && (
         <DateTimePicker
@@ -189,9 +268,24 @@ const MemberRegistrationForm = ({ navigation }) => {
         />
       )}
 
-      <TextInput style={styles.input} placeholder={t("blood_placeholder")} value={blood} onChangeText={setBlood} />
-      <TextInput style={styles.input} placeholder={t("present_address_placeholder")} value={present_address} onChangeText={setPresentAddress} />
-      <TextInput style={styles.input} placeholder={t("permanent_address_placeholder")} value={permanent_address} onChangeText={setPermanentAddress} />
+      <TextInput
+        style={styles.input}
+        placeholder={t("blood_placeholder")}
+        value={blood}
+        onChangeText={setBlood}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("present_address_placeholder")}
+        value={present_address}
+        onChangeText={setPresentAddress}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder={t("permanent_address_placeholder")}
+        value={permanent_address}
+        onChangeText={setPermanentAddress}
+      />
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>{t("update_data")}</Text>
@@ -218,7 +312,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 8,
-    marginTop:10,
+    marginTop: 10,
     paddingHorizontal: 10,
     backgroundColor: "#fff",
     marginBottom: 12,
