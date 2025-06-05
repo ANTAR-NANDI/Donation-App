@@ -67,6 +67,11 @@ const DashboardStackNavigator = ({ navigation }) => (
       component={LogoutScreen}
       options={{ headerShown: false }}
     />
+    <Stack.Screen
+      name="Profile"
+      component={ProfileScreen}
+      options={{ title: "Profile" }}
+    />
   </Stack.Navigator>
 );
 
@@ -94,7 +99,6 @@ const DevoteeStackNavigator = ({ navigation }) => (
     />
   </Stack.Navigator>
 );
-
 
 const NewsStackNavigator = ({ navigation }) => (
   <Stack.Navigator>
@@ -207,11 +211,7 @@ const AuthStack = () => (
       component={LoginScreen}
       options={{ title: "Login" }}
     />
-    <Stack.Screen
-      name="ProfileScreen"
-      component={ProfileScreen}
-      options={{ title: "Profile" }}
-    />
+
     <Stack.Screen
       name="ForgetPassword"
       component={ForgetPasswordScreen}
