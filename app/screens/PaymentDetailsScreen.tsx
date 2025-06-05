@@ -54,10 +54,9 @@ const PaymentDetailsScreen = ({ route, navigation }: any) => {
     <ScrollView>
       <View style={styles.container}>
         <Text style={styles.instruction}>
-          Send money via bKash/Nagad to the following number:
+          Send Money via {method} to the Following Number:
           {"\n\n"}📱 <Text style={styles.bold}>01824506162</Text>
           {"\n"}📝 Type: Send Money
-          {"\n"}🧾 Note (if applicable): [Your Name or Purpose]
           {"\n\n"}Once payment is done, please send a screenshot and your name
           to confirm.
           {"\n\n"}Thank you for your support! 🙏
@@ -72,7 +71,7 @@ const PaymentDetailsScreen = ({ route, navigation }: any) => {
           keyboardType="phone-pad"
         />
 
-        <Text style={styles.label}>Transaction ID *</Text>
+        <Text style={styles.label}>Transaction ID </Text>
         <TextInput
           style={styles.input}
           placeholder="Enter transaction ID"

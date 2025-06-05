@@ -30,6 +30,7 @@ import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import NotificationProvider from "../screens/Notification-Provider";
 import EditDevoteeScreen from "../screens/EditDevoteeScreen";
 import PaymentDetailsScreen from "../screens/PaymentDetailsScreen";
+import ProfileDropdownMenu from "../screens/ProfileDropdownMenu ";
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
@@ -51,12 +52,20 @@ const DashboardStackNavigator = ({ navigation }) => (
     <Stack.Screen
       name="Home"
       component={HomeScreen}
-      options={getScreenOptions(navigation, "Home")}
+      options={{
+        title: "Home",
+        headerRight: () => <ProfileDropdownMenu />,
+      }}
     />
     <Stack.Screen
       name="MemberRegistration"
       component={MemberRegistrationScreen}
-      options={getScreenOptions(navigation, "Member Registration")}
+      options={{ title: "Member Registration" }}
+    />
+    <Stack.Screen
+      name="Logout"
+      component={LogoutScreen}
+      options={{ headerShown: false }}
     />
   </Stack.Navigator>
 );
@@ -86,20 +95,6 @@ const DevoteeStackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const PronamiStackNavigator = ({ navigation }) => (
-  <Stack.Navigator>
-    <Stack.Screen
-      name="AllPronamis"
-      component={PronamiScreen}
-      options={{ title: "All Pronamis" }}
-    />
-    <Stack.Screen
-      name="AddPronami"
-      component={AddPronamiScreen}
-      options={{ headerShown: false }}
-    />
-  </Stack.Navigator>
-);
 
 const NewsStackNavigator = ({ navigation }) => (
   <Stack.Navigator>
@@ -145,13 +140,12 @@ const DonationStackNavigator = ({ navigation }) => (
   </Stack.Navigator>
 );
 
-const TabNavigator = ({ navigation }) => (
-  <Tab.Navigator>
+const TabNavigator = () => (
+  <Tab.Navigator screenOptions={{ headerShown: false }}>
     <Tab.Screen
       name="Dashboard"
       component={DashboardStackNavigator}
       options={{
-        headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="home-outline" size={size} color={color} />
         ),
@@ -167,12 +161,20 @@ const TabNavigator = ({ navigation }) => (
       }}
     />
     <Tab.Screen
+      name="Devotees"
+      component={DevoteeStackNavigator}
+      options={{
+        tabBarIcon: ({ color, size }) => (
+          <Ionicons name="people-outline" size={size} color={color} />
+        ),
+      }}
+    />
+    <Tab.Screen
       name="Donation"
       component={DonationStackNavigator}
       options={{
-        headerShown: false,
         tabBarIcon: ({ color, size }) => (
-          <Ionicons name="notifications-outline" size={size} color={color} />
+          <Ionicons name="card-outline" size={size} color={color} />
         ),
       }}
     />
@@ -180,92 +182,21 @@ const TabNavigator = ({ navigation }) => (
       name="Notifications"
       component={NotificationStackNavigator}
       options={{
-        headerShown: false,
         tabBarIcon: ({ color, size }) => (
           <Ionicons name="notifications-outline" size={size} color={color} />
         ),
       }}
     />
     <Tab.Screen
-      name="Profile"
-      component={ProfileScreen}
+      name="News"
+      component={NewsStackNavigator}
       options={{
         tabBarIcon: ({ color, size }) => (
-          <Ionicons name="person-outline" size={size} color={color} />
+          <Ionicons name="newspaper-outline" size={size} color={color} />
         ),
       }}
     />
   </Tab.Navigator>
-);
-
-const DrawerNavigator = () => (
-  <Drawer.Navigator>
-    <Drawer.Screen
-      name="Dashboard"
-      component={TabNavigator}
-      options={{
-        headerShown: false,
-        drawerIcon: () => (
-          <Ionicons name="home-outline" size={24} color="black" />
-        ),
-      }}
-    />
-    <Drawer.Screen
-      name="Profile"
-      component={ProfileScreen}
-      options={{
-        drawerIcon: () => (
-          <Ionicons name="person-outline" size={24} color="black" />
-        ),
-      }}
-    />
-    <Drawer.Screen
-      name="Chat"
-      component={ChatScreen}
-      options={{
-        drawerIcon: () => (
-          <Ionicons name="chatbubbles-outline" size={24} color="black" />
-        ),
-      }}
-    />
-    <Drawer.Screen
-      name="News"
-      component={NewsStackNavigator}
-      options={{
-        drawerIcon: () => (
-          <Ionicons name="notifications-outline" size={24} color="black" />
-        ),
-      }}
-    />
-    <Drawer.Screen
-      name="Pronami"
-      component={PronamiStackNavigator}
-      options={{
-        drawerIcon: () => (
-          <Ionicons name="heart-outline" size={24} color="black" />
-        ),
-      }}
-    />
-    <Drawer.Screen
-      name="Devotees"
-      component={DevoteeStackNavigator}
-      options={{
-        drawerIcon: () => (
-          <Ionicons name="person-outline" size={24} color="black" />
-        ),
-      }}
-    />
-    <Drawer.Screen
-      name="Logout"
-      component={LogoutScreen}
-      options={{
-        headerShown: false,
-        drawerIcon: () => (
-          <Ionicons name="log-out-outline" size={24} color="black" />
-        ),
-      }}
-    />
-  </Drawer.Navigator>
 );
 
 const AuthStack = () => (
@@ -275,6 +206,11 @@ const AuthStack = () => (
       name="Login"
       component={LoginScreen}
       options={{ title: "Login" }}
+    />
+    <Stack.Screen
+      name="ProfileScreen"
+      component={ProfileScreen}
+      options={{ title: "Profile" }}
     />
     <Stack.Screen
       name="ForgetPassword"
@@ -314,7 +250,7 @@ const RootStackNavigator = () => {
           />
           <Stack.Screen
             name="App"
-            component={DrawerNavigator}
+            component={TabNavigator}
             options={{ headerShown: false }}
           />
         </Stack.Navigator>

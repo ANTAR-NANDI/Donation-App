@@ -18,7 +18,7 @@ const DonationScreen = ({ navigation }: any) => {
       <View style={styles.paymentContainer}>
         <TouchableOpacity
           style={styles.paymentBox}
-          onPress={() => handlePaymentSelection("nagad")}
+          onPress={() => handlePaymentSelection("Nagad")}
         >
           <Image
             source={require("../../assets/images/nagad.jpg")}
@@ -29,7 +29,7 @@ const DonationScreen = ({ navigation }: any) => {
 
         <TouchableOpacity
           style={styles.paymentBox}
-          onPress={() => handlePaymentSelection("rocket")}
+          onPress={() => handlePaymentSelection("Rocket")}
         >
           <Image
             source={require("../../assets/images/rocket.jpg")}
