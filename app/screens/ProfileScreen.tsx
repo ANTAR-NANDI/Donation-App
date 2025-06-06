@@ -6,6 +6,7 @@ import {
   TextInput,
   TouchableOpacity,
   ScrollView,
+  Image,
   StyleSheet,
 } from "react-native";
 import { useFocusEffect } from "@react-navigation/native";
@@ -15,6 +16,8 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import BASE_URL from "../../config";
 import { useTranslation } from "react-i18next";
+import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const MemberRegistrationForm = ({ navigation }) => {
   const { t } = useTranslation();
@@ -30,7 +33,7 @@ const MemberRegistrationForm = ({ navigation }) => {
   const [present_address, setPresentAddress] = useState("");
   const [permanent_address, setPermanentAddress] = useState("");
   const [user, setUser] = useState(null);
-
+  const [image, setImage] = useState(null);
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
 
@@ -69,7 +72,7 @@ const MemberRegistrationForm = ({ navigation }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-
+      console.log(response.data);
       setUser(response.data);
     } catch (error) {
       console.error(
@@ -154,6 +157,10 @@ const MemberRegistrationForm = ({ navigation }) => {
   const handleSubmit = async () => {
     if (!validateForm()) return;
     try {
+      let imageBase64 = null;
+      if (image?.uri) {
+        imageBase64 = await imageToBase64(image.uri);
+      }
       const response = await axios.post(
         `${BASE_URL}/update_profile`,
         {
@@ -165,6 +172,7 @@ const MemberRegistrationForm = ({ navigation }) => {
           email,
           occupation,
           nationality,
+          image: imageBase64,
           date_of_birth: formatDate(date),
           blood,
           present_address,
@@ -196,7 +204,24 @@ const MemberRegistrationForm = ({ navigation }) => {
       });
     }
   };
+  const imageToBase64 = async (uri) => {
+    const manipResult = await ImageManipulator.manipulateAsync(uri, [], {
+      base64: true,
+    });
+    return manipResult.base64;
+  };
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
+    if (!result.canceled) {
+      setImage(result.assets[0]);
+    }
+  };
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <Text style={styles.title}>Member's Profile</Text>
@@ -286,6 +311,18 @@ const MemberRegistrationForm = ({ navigation }) => {
         value={permanent_address}
         onChangeText={setPermanentAddress}
       />
+      <TouchableOpacity style={styles.imagePickerButton} onPress={pickImage}>
+        <Text style={styles.imagePickerButtonText}>📷 Image</Text>
+      </TouchableOpacity>
+
+      {image && (
+        <View style={styles.imagePreviewContainer}>
+          <Image source={{ uri: image.uri }} style={styles.imagePreview} />
+          <TouchableOpacity onPress={() => setImage(null)}>
+            <Text style={styles.removeImageText}>❌ {t("remove_image")}</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       <TouchableOpacity style={styles.button} onPress={handleSubmit}>
         <Text style={styles.buttonText}>{t("update_data")}</Text>
@@ -296,6 +333,38 @@ const MemberRegistrationForm = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  imagePreviewContainer: {
+    alignItems: "center",
+    marginBottom: 12,
+  },
+
+  imagePreview: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginBottom: 6,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
+
+  removeImageText: {
+    color: "#ff4444",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  imagePickerButton: {
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 6,
+    alignItems: "center",
+    marginBottom: 10,
+  },
+
+  imagePickerButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+    fontSize: 16,
+  },
   container: {
     flexGrow: 1,
     padding: 20,

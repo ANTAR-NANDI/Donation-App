@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   TouchableOpacity,
@@ -7,16 +7,49 @@ import {
   Text,
   StyleSheet,
 } from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
+import BASE_URL from "../../config";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LogoutScreen from "../screens/LogoutScreen";
 const ProfileDropdownMenu = () => {
   const [visible, setVisible] = useState(false);
   const navigation = useNavigation();
+  const [user, setUser] = useState(null);
 
   const handleLogout = async () => {
     await AsyncStorage.removeItem("@auth_token");
     navigation.reset({ index: 0, routes: [{ name: "Auth" }] });
+  };
+  useFocusEffect(
+    useCallback(() => {
+      fetchUserData();
+    }, [])
+  );
+
+  const fetchUserData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("@auth_token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      const response = await axios.get(`${BASE_URL}/user`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response.data.photo);
+      setUser(response.data.photo);
+    } catch (error) {
+      console.error(
+        "Error fetching user data:",
+        error.response?.data || error.message
+      );
+    }
   };
 
   return (
@@ -26,7 +59,9 @@ const ProfileDropdownMenu = () => {
         style={{ marginRight: 15 }}
       >
         <Image
-          source={require("../../assets/images/user.png")}
+          source={{
+            uri: `http://192.168.0.148:8000/images/users/${user}`,
+          }}
           style={styles.image}
         />
       </TouchableOpacity>
