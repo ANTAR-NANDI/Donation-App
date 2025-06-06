@@ -68,7 +68,6 @@ const ChatScreen = ({ navigation }) => {
     if (!validateForm()) return;
 
     try {
-      let image = null;
       const token = await AsyncStorage.getItem("@auth_token");
 
       let imageBase64 = null;
@@ -80,7 +79,6 @@ const ChatScreen = ({ navigation }) => {
         message,
         image: imageBase64,
       };
-      console.log(payload);
 
       const response = await axios.post(`${BASE_URL}/member_message`, payload, {
         headers: {
@@ -144,7 +142,19 @@ const ChatScreen = ({ navigation }) => {
               ]}
             >
               <View style={styles.messageContent}>
-                <Text style={styles.messageText}>{item.message}</Text>
+                {item.message ? (
+                  <Text style={styles.messageText}>{item.message}</Text>
+                ) : null}
+
+                {item.image ? (
+                  <Image
+                    source={{
+                      uri: `http://192.168.0.148:8000/images/chats/${item.image}`,
+                    }}
+                    style={styles.chatImage}
+                    resizeMode="cover"
+                  />
+                ) : null}
                 <Text style={styles.messageTime}>
                   {new Date(item.date).toLocaleString()}
                 </Text>
@@ -187,6 +197,14 @@ const ChatScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+  chatImage: {
+    width: 200,
+    height: 200,
+    borderRadius: 10,
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: "#ccc",
+  },
   container: {
     flex: 1,
     backgroundColor: "#f9f9f9",
