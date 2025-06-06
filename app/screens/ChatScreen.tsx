@@ -149,7 +149,7 @@ const ChatScreen = ({ navigation }) => {
                 {item.image ? (
                   <Image
                     source={{
-                      uri: `http://192.168.0.148:8000/images/chats/${item.image}`,
+                      uri: `https://topoban.w3schoolbd.org/images/chats/${item.image}`,
                     }}
                     style={styles.chatImage}
                     resizeMode="cover"
