@@ -60,7 +60,7 @@ const ProfileDropdownMenu = () => {
       >
         <Image
           source={{
-            uri: `http://192.168.0.148:8000/images/users/${user}`,
+            uri: `https://topoban.w3schoolbd.org/images/users/${user}`,
           }}
           style={styles.image}
         />
