@@ -136,24 +136,34 @@ const DonationScreen = ({ navigation }: any) => {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       {step === 1 && (
-        <View>
-          <Text>Select Devotee</Text>
-          <Picker
-            selectedValue={devoteeId}
-            onValueChange={(itemValue) => setDevoteeId(itemValue)}
-          >
-            {donors.map((donor) => (
-              <Picker.Item key={donor.id} label={donor.name} value={donor.id} />
-            ))}
-          </Picker>
+        <View style={styles.stepContainer}>
+          <Text style={styles.sectionTitle}>Select Devotee</Text>
+          <View style={styles.pickerContainer}>
+            <Picker
+              selectedValue={devoteeId}
+              onValueChange={(itemValue) => setDevoteeId(itemValue)}
+              style={styles.picker}
+            >
+              <Picker.Item label="-- Select Devotee --" value={null} />
+              {donors.map((donor) => (
+                <Picker.Item
+                  key={donor.id}
+                  label={donor.name}
+                  value={donor.id}
+                />
+              ))}
+            </Picker>
+          </View>
 
-          <Text>From Date</Text>
-          <Button
-            title={fromDate.toDateString()}
+          <Text style={styles.label}>From Date</Text>
+          <TouchableOpacity
+            style={styles.dateButton}
             onPress={() => setShowFromPicker(true)}
-          />
+          >
+            <Text style={styles.dateText}>{fromDate.toDateString()}</Text>
+          </TouchableOpacity>
           {showFromPicker && (
             <DateTimePicker
               value={fromDate}
@@ -165,11 +175,13 @@ const DonationScreen = ({ navigation }: any) => {
             />
           )}
 
-          <Text>To Date</Text>
-          <Button
-            title={toDate.toDateString()}
+          <Text style={styles.label}>To Date</Text>
+          <TouchableOpacity
+            style={styles.dateButton}
             onPress={() => setShowToPicker(true)}
-          />
+          >
+            <Text style={styles.dateText}>{toDate.toDateString()}</Text>
+          </TouchableOpacity>
           {showToPicker && (
             <DateTimePicker
               value={toDate}
@@ -181,134 +193,203 @@ const DonationScreen = ({ navigation }: any) => {
             />
           )}
 
+          <Text style={styles.label}>Donation Amount (৳)</Text>
           <TextInput
             placeholder="Enter amount"
             keyboardType="numeric"
             value={amount}
             onChangeText={setAmount}
+            style={styles.input}
           />
 
-          <Button title="Next" onPress={() => setStep(2)} />
+          <TouchableOpacity style={styles.button} onPress={() => setStep(2)}>
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
         </View>
       )}
+
       {step === 2 && (
-        <View>
-          <TouchableOpacity onPress={() => handlePaymentSelection("Nagad")}>
+        <View style={styles.stepContainer}>
+          <Text style={styles.sectionTitle}>Select Payment Method</Text>
+
+          <TouchableOpacity
+            style={styles.paymentOption}
+            onPress={() => handlePaymentSelection("Nagad")}
+          >
             <Image
               source={require("../../assets/images/nagad.jpg")}
               style={styles.image}
             />
-            <Text>Nagad</Text>
+            <Text style={styles.paymentText}>Nagad</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => handlePaymentSelection("Rocket")}>
+          <TouchableOpacity
+            style={styles.paymentOption}
+            onPress={() => handlePaymentSelection("Rocket")}
+          >
             <Image
               source={require("../../assets/images/rocket.jpg")}
               style={styles.image}
             />
-            <Text>Rocket</Text>
+            <Text style={styles.paymentText}>Rocket</Text>
           </TouchableOpacity>
         </View>
       )}
 
       {step === 3 && (
-        <ScrollView>
-          <Text>Send Money via {paymentMethod}</Text>
-          <Text>📱 01824506162</Text>
+        <View style={styles.stepContainer}>
+          <Text style={styles.sectionTitle}>
+            Send Money via {paymentMethod}
+          </Text>
+          <Text style={styles.subText}>📱 01824506162</Text>
 
-          <Text>Mobile Number *</Text>
+          <Text style={styles.label}>Mobile Number *</Text>
           <TextInput
             placeholder="Enter your mobile number"
             value={mobileNumber}
             onChangeText={setMobileNumber}
             keyboardType="phone-pad"
+            style={styles.input}
           />
 
-          <Text>Transaction ID</Text>
+          <Text style={styles.label}>Transaction ID *</Text>
           <TextInput
             placeholder="Enter transaction ID"
             value={transactionId}
             onChangeText={setTransactionId}
+            style={styles.input}
           />
 
-          <Text>Amount *</Text>
+          <Text style={styles.label}>Amount *</Text>
           <TextInput
             placeholder="Enter amount"
             value={amount}
             onChangeText={setAmount}
             keyboardType="numeric"
+            style={styles.input}
           />
 
-          <TouchableOpacity onPress={pickImage}>
-            <Text>Pick Screenshot Image</Text>
+          <TouchableOpacity onPress={pickImage} style={styles.uploadButton}>
+            <Text style={styles.uploadText}>📷 Upload Screenshot</Text>
           </TouchableOpacity>
 
           {imageUri && (
             <Image source={{ uri: imageUri }} style={styles.previewImage} />
           )}
 
-          <Button title="Submit" onPress={handleSubmit} />
-        </ScrollView>
+          <TouchableOpacity style={styles.button} onPress={handleSubmit}>
+            <Text style={styles.buttonText}>Submit</Text>
+          </TouchableOpacity>
+        </View>
       )}
-
       <Toast />
-    </View>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FDF6EC",
+    padding: 20,
+  },
+  stepContainer: {
+    marginTop: 20,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 15,
+    color: "#4D2600",
+  },
+  subText: {
+    fontSize: 16,
+    color: "#555",
+    marginBottom: 15,
+  },
+  label: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "#4D2600",
+    marginBottom: 8,
+    marginTop: 12,
+  },
+  input: {
+    borderWidth: 1.5,
+    borderColor: "#B2875E",
+    borderRadius: 12,
+    padding: 10,
+    fontSize: 16,
+    backgroundColor: "#FFF",
+    marginBottom: 10,
+  },
+  pickerContainer: {
+    borderWidth: 1.5,
+    borderColor: "#B2875E",
+    borderRadius: 12,
+    marginBottom: 15,
+    backgroundColor: "#FFF",
+  },
+  picker: {
+    padding: 10,
+    color: "#333",
+  },
+  dateButton: {
+    backgroundColor: "#FFF",
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1.5,
+    borderColor: "#B2875E",
+    marginBottom: 10,
+  },
+  dateText: {
+    fontSize: 16,
+    color: "#333",
+  },
+  image: {
+    width: 100,
+    height: 80,
+    resizeMode: "contain",
+    borderRadius: 10,
+  },
+  paymentOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    padding: 10,
+    borderWidth: 1,
+    borderColor: "#B2875E",
+    borderRadius: 10,
+    backgroundColor: "#FFF",
+    marginBottom: 15,
+  },
+  paymentText: {
+    fontSize: 18,
+    color: "#4D2600",
+  },
+  uploadButton: {
+    backgroundColor: "#FFD699",
+    paddingVertical: 12,
+    borderRadius: 12,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  uploadText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#4D2600",
+  },
   previewImage: {
     width: "100%",
     height: 200,
     borderRadius: 15,
     marginBottom: 15,
+    marginTop: 10,
   },
-  image: {
-    width: 80,
-    height: 70,
-    resizeMode: "contain",
-    marginBottom: 5,
-  },
-  logo: {
-    width: 100,
-    height: 100,
-    alignSelf: "center",
-    marginBottom: 20,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: "#D5C295",
-    padding: 20,
-    justifyContent: "center",
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: "bold",
-    color: "#4D2600",
-    marginBottom: 5,
-  },
-  input: {
-    borderWidth: 2,
-    borderColor: "#4D2600",
-    borderRadius: 25,
-    paddingHorizontal: 15,
-    paddingVertical: 8,
-    fontSize: 16,
-    color: "#4D2600",
-    marginBottom: 15,
-    backgroundColor: "#FFF",
-  },
-  pickerContainer: {
-    borderRadius: 25,
-    backgroundColor: "#FFF",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    marginBottom: 15,
-  },
-  registerButton: {
+  button: {
     backgroundColor: "#4D2600",
-    paddingVertical: 12,
-    borderRadius: 25,
+    paddingVertical: 14,
+    borderRadius: 12,
     alignItems: "center",
     marginTop: 10,
   },
