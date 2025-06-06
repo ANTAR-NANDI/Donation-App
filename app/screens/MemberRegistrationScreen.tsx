@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -8,17 +8,17 @@ import {
   StyleSheet,
   Button,
   ScrollView,
-} from 'react-native';
-import Toast from 'react-native-toast-message';
-import axios from 'axios';
-import BASE_URL from '../../config';
-import { useTranslation } from 'react-i18next';
-import RNPickerSelect from 'react-native-picker-select';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
-import * as ImageManipulator from 'expo-image-manipulator';
+} from "react-native";
+import Toast from "react-native-toast-message";
+import axios from "axios";
+import BASE_URL from "../../config";
+import { useTranslation } from "react-i18next";
+import RNPickerSelect from "react-native-picker-select";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import * as ImagePicker from "expo-image-picker";
+import * as FileSystem from "expo-file-system";
+import * as ImageManipulator from "expo-image-manipulator";
 
 const imageToBase64 = async (uri) => {
   const manipResult = await ImageManipulator.manipulateAsync(uri, [], {
@@ -30,12 +30,12 @@ const imageToBase64 = async (uri) => {
 const MemberRegistrationScreen = ({ navigation }: any) => {
   const { t } = useTranslation();
 
-  const [name, setName] = useState('abc');
-  const [father_name, setFatherName] = useState('def');
-  const [mother_name, setMotherName] = useState('ghi');
-  const [permanent_address, setPermanentAddress] = useState('kjl');
-  const [present_address, setPresentAddress] = useState('mno');
-  const [reference_number, setReferenceNumber] = useState('dsd');
+  const [name, setName] = useState("abc");
+  const [father_name, setFatherName] = useState("def");
+  const [mother_name, setMotherName] = useState("ghi");
+  const [permanent_address, setPermanentAddress] = useState("kjl");
+  const [present_address, setPresentAddress] = useState("mno");
+  const [reference_number, setReferenceNumber] = useState("dsd");
   const [relation, setRelation] = useState(null);
   const [front_image, setFrontImage] = useState(null);
   const [back_image, setBackImage] = useState(null);
@@ -50,7 +50,7 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
   };
 
   const formatDate = (date) => {
-    return date.toISOString().split('T')[0];
+    return date.toISOString().split("T")[0];
   };
 
   const validateForm = () => {
@@ -61,9 +61,9 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
       !present_address.trim()
     ) {
       Toast.show({
-        type: 'error',
-        text1: 'Validation Error',
-        text2: 'Please fill all required fields.',
+        type: "error",
+        text1: "Validation Error",
+        text2: "Please fill all required fields.",
       });
       return false;
     }
@@ -100,7 +100,7 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
     if (!validateForm()) return;
 
     try {
-      const token = await AsyncStorage.getItem('@auth_token');
+      const token = await AsyncStorage.getItem("@auth_token");
 
       let frontBase64 = null;
       let backBase64 = null;
@@ -125,30 +125,33 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
         front_image: frontBase64,
         back_image: backBase64,
       };
+      console.log(payload);
 
       const response = await axios.post(`${BASE_URL}/add_devotee`, payload, {
         headers: {
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
         },
       });
 
       Toast.show({
-        type: 'success',
-        text1: 'Success',
+        type: "success",
+        text1: "Success",
         text2: response.data.message,
       });
 
       setTimeout(() => {
-        navigation.replace('App');
+        navigation.replace("App");
       }, 1000);
     } catch (error) {
-      console.log('AXIOS ERROR:', JSON.stringify(error, null, 2));
+      console.log("AXIOS ERROR:", JSON.stringify(error, null, 2));
 
       Toast.show({
-        type: 'error',
-        text1: 'Upload failed',
+        type: "error",
+        text1: "Upload failed",
         text2:
-          error?.response?.data?.error || error.message || 'Unknown error occurred',
+          error?.response?.data?.error ||
+          error.message ||
+          "Unknown error occurred",
       });
     }
   };
@@ -156,26 +159,26 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
   return (
     <View>
       <ScrollView contentContainerStyle={styles.formContainer}>
-        <Text style={styles.formTitle}>{t('register_form')}</Text>
+        <Text style={styles.formTitle}>{t("register_form")}</Text>
 
         <Text style={styles.label}>Select Relation *</Text>
         <View style={styles.pickerContainer}>
           <RNPickerSelect
             onValueChange={(value) => setRelation(value)}
             items={[
-              { label: 'Father', value: 'father' },
-              { label: 'Mother', value: 'mother' },
-              { label: 'Wife', value: 'wife' },
-              { label: 'Child', value: 'child' },
-              { label: 'Himself', value: 'himself' },
+              { label: "Father", value: "father" },
+              { label: "Mother", value: "mother" },
+              { label: "Wife", value: "wife" },
+              { label: "Child", value: "child" },
+              { label: "Himself", value: "himself" },
             ]}
             style={pickerSelectStyles}
-            placeholder={{ label: 'Choose Relation', value: null }}
+            placeholder={{ label: "Choose Relation", value: null }}
             useNativeAndroidPickerStyle={false}
           />
         </View>
 
-        <Text style={styles.label}>{t('name')} *</Text>
+        <Text style={styles.label}>{t("name")} *</Text>
         <TextInput style={styles.input} value={name} onChangeText={setName} />
 
         <Text style={styles.label}>Father / Husband's Name *</Text>
@@ -207,18 +210,32 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
         />
 
         <Text style={styles.label}>Date of Birth: {formatDate(date)}</Text>
-        <Button title="Select Date of Birth" onPress={() => setShowPicker(true)} />
+        <Button
+          title="Select Date of Birth"
+          onPress={() => setShowPicker(true)}
+        />
         {showPicker && (
-          <DateTimePicker value={date} mode="date" display="default" onChange={handleChange} />
+          <DateTimePicker
+            value={date}
+            mode="date"
+            display="default"
+            onChange={handleChange}
+          />
         )}
 
         <Text style={styles.label}>Front Image of NID</Text>
-        <TouchableOpacity style={styles.registerButton} onPress={pickFrontImage}>
+        <TouchableOpacity
+          style={styles.registerButton}
+          onPress={pickFrontImage}
+        >
           <Text style={styles.buttonText}>Pick Front Image</Text>
         </TouchableOpacity>
         {front_image && (
-          <View style={{ alignItems: 'center', marginTop: 10 }}>
-            <Image source={{ uri: front_image.uri }} style={{ width: 200, height: 200 }} />
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Image
+              source={{ uri: front_image.uri }}
+              style={{ width: 200, height: 200 }}
+            />
             <TouchableOpacity
               style={styles.removeButton}
               onPress={() => setFrontImage(null)}
@@ -233,8 +250,11 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
           <Text style={styles.buttonText}>Pick Back Image</Text>
         </TouchableOpacity>
         {back_image && (
-          <View style={{ alignItems: 'center', marginTop: 10 }}>
-            <Image source={{ uri: back_image.uri }} style={{ width: 200, height: 200 }} />
+          <View style={{ alignItems: "center", marginTop: 10 }}>
+            <Image
+              source={{ uri: back_image.uri }}
+              style={{ width: 200, height: 200 }}
+            />
             <TouchableOpacity
               style={styles.removeButton}
               onPress={() => setBackImage(null)}
@@ -252,8 +272,11 @@ const MemberRegistrationScreen = ({ navigation }: any) => {
           onChangeText={setReferenceNumber}
         />
 
-        <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-          <Text style={styles.buttonText}>{t('register')}</Text>
+        <TouchableOpacity
+          style={styles.registerButton}
+          onPress={handleRegister}
+        >
+          <Text style={styles.buttonText}>{t("register")}</Text>
         </TouchableOpacity>
       </ScrollView>
       <Toast />
@@ -267,8 +290,8 @@ const pickerSelectStyles = {
     paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 25,
-    backgroundColor: '#FFF',
-    color: '#4D2600',
+    backgroundColor: "#FFF",
+    color: "#4D2600",
     paddingRight: 30,
   },
   inputAndroid: {
@@ -276,8 +299,8 @@ const pickerSelectStyles = {
     paddingVertical: 12,
     paddingHorizontal: 15,
     borderRadius: 25,
-    backgroundColor: '#FFF',
-    color: '#4D2600',
+    backgroundColor: "#FFF",
+    color: "#4D2600",
     paddingRight: 30,
   },
 };
@@ -285,7 +308,7 @@ const pickerSelectStyles = {
 const styles = StyleSheet.create({
   pickerContainer: {
     borderRadius: 25,
-    backgroundColor: '#FFF',
+    backgroundColor: "#FFF",
     paddingHorizontal: 10,
     paddingVertical: 5,
     marginBottom: 15,
@@ -295,44 +318,44 @@ const styles = StyleSheet.create({
   },
   formTitle: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    textAlign: 'center',
+    textAlign: "center",
   },
   label: {
     fontSize: 16,
     marginBottom: 5,
     marginTop: 10,
-    color: '#333',
+    color: "#333",
   },
   input: {
     height: 40,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
     marginBottom: 15,
     paddingLeft: 8,
     borderRadius: 5,
   },
   registerButton: {
-    backgroundColor: '#6200ee',
+    backgroundColor: "#6200ee",
     padding: 10,
     borderRadius: 5,
-    alignItems: 'center',
+    alignItems: "center",
     marginTop: 20,
   },
   buttonText: {
-    color: 'white',
+    color: "white",
     fontSize: 16,
   },
   removeButton: {
     marginTop: 10,
-    backgroundColor: '#b00020',
+    backgroundColor: "#b00020",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 5,
   },
   removeButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
   },
 });
