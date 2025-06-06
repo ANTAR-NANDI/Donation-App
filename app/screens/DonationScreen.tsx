@@ -1,100 +1,193 @@
-import React from "react";
-import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
-import { useRouter } from "expo-router"; // or use navigation.navigate if using react-navigation
-import { useTranslation } from "react-i18next";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  TouchableOpacity,
+} from "react-native";
+import { Button } from "react-native-paper";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import BASE_URL from "../../config";
+import { Ionicons } from "@expo/vector-icons";
 
-const DonationScreen = ({ navigation }: any) => {
-  const { t } = useTranslation();
+const PronamiTable = ({ navigation }: any) => {
+  const [pronamisGrouped, setPronamisGrouped] = useState({});
+  const [error, setError] = useState(null);
 
-  const handlePaymentSelection = (method: string) => {
-    // Navigate to the next screen with selected method
-    navigation.navigate("DonationDetail", { method }); // adjust the screen name
+  const fetchPronamis = async () => {
+    try {
+      const token = await AsyncStorage.getItem("@auth_token");
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+
+      const response = await axios.get(`${BASE_URL}/get_pronamis`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const rawData = response.data.pronami;
+
+      const flattened = Object.entries(rawData).flatMap(([relation, items]) =>
+        items.map((item) => ({
+          relation: relation.charAt(0).toUpperCase() + relation.slice(1),
+          amount: item.amount,
+          mobile_number: item.mobile_number,
+          payment_method: item.payment_method,
+        }))
+      );
+
+      const grouped = flattened.reduce((acc, curr) => {
+        if (!acc[curr.relation]) acc[curr.relation] = [];
+        acc[curr.relation].push(curr);
+        return acc;
+      }, {});
+
+      setPronamisGrouped(grouped);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to load Pronamis");
+    }
   };
 
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      fetchPronamis();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
+
+  const total = Object.values(pronamisGrouped)
+    .flat()
+    .reduce((sum, item) => sum + Number(item.amount), 0);
+
   return (
-    <View style={styles.container}>
-      <Text style={styles.label}>{t("select_payment_method")}</Text>
+    <ScrollView contentContainerStyle={styles.container}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate("AddDonation")}
+      >
+        <Text style={styles.addButtonText}>Add Donation</Text>
+      </TouchableOpacity>
 
-      <View style={styles.paymentContainer}>
-        <TouchableOpacity
-          style={styles.paymentBox}
-          onPress={() => handlePaymentSelection("Nagad")}
-        >
-          <Image
-            source={require("../../assets/images/nagad.jpg")}
-            style={styles.image}
-          />
-          <Text style={styles.paymentText}>Nagad</Text>
-        </TouchableOpacity>
+      <View style={styles.table}>
+        <View style={[styles.row, styles.header]}>
+          <Text style={styles.cell}>Relation</Text>
+          <Text style={styles.cell}>Payment</Text>
+          <Text style={styles.cell}>Mobile</Text>
+          <Text style={styles.cell}>Taka</Text>
+        </View>
 
-        <TouchableOpacity
-          style={styles.paymentBox}
-          onPress={() => handlePaymentSelection("Rocket")}
-        >
-          <Image
-            source={require("../../assets/images/rocket.jpg")}
-            style={styles.image}
-          />
-          <Text style={styles.paymentText}>Rocket</Text>
-        </TouchableOpacity>
+        {Object.entries(pronamisGrouped).map(([relation, items], relIdx) => (
+          <React.Fragment key={relIdx}>
+            <View style={[styles.row, { backgroundColor: "#fff4d1" }]}>
+              <Text style={[styles.cell, styles.bold]}>
+                {relation.toUpperCase()}
+              </Text>
+              <Text style={styles.cell}></Text>
+              <Text style={styles.cell}></Text>
+              <Text style={styles.cell}></Text>
+            </View>
+
+            {items.map((item, index) => (
+              <View style={styles.row} key={index}>
+                <Text style={styles.cell}>{item.relation}</Text>
+                <Text style={styles.cell}>{item.payment_method || "N/A"}</Text>
+                <Text style={styles.cell}>{item.mobile_number || "N/A"}</Text>
+                <Text style={styles.cell}>{item.amount}৳</Text>
+              </View>
+            ))}
+          </React.Fragment>
+        ))}
+
+        <View style={[styles.row, styles.footer]}>
+          <Text style={styles.cell}></Text>
+          <Text style={styles.cell}></Text>
+          <Text style={styles.cell}></Text>
+          <Text style={[styles.cell, styles.bold]}>Total Pronami:</Text>
+          <Text style={[styles.cell, styles.bold]}>{total} Taka</Text>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 };
 
+export default PronamiTable;
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#D5C295",
-    padding: 20,
-    justifyContent: "center",
+  addButton: {
+    backgroundColor: "#ff7433",
+    paddingVertical: 8,
+    width: 100,
+    margin: 20,
+    paddingHorizontal: 8,
+    borderRadius: 8,
   },
-  label: {
-    fontSize: 16,
+  addButtonText: {
+    color: "black",
     fontWeight: "bold",
-    color: "#4D2600",
-    marginBottom: 15,
-    textAlign: "center",
   },
-  paymentContainer: {
+  buttonContainer: {
     flexDirection: "row",
-    justifyContent: "space-around",
-    marginBottom: 30,
+    justifyContent: "space-between",
+    width: "70%", // Make the container full width
+    marginBottom: 10,
   },
-  paymentBox: {
-    backgroundColor: "#C7A977",
-    padding: 10,
-    borderRadius: 15,
-    alignItems: "center",
-    width: 150,
-    height: 100,
-    justifyContent: "center",
+
+  refreshButton: {
+    flex: 1, // Ensure the button takes available space
+    alignSelf: "center", // Center the button vertically
+    paddingHorizontal: 10,
+    paddingVertical: 0,
+    borderColor: "#c62828",
+    borderWidth: 1,
+    height: 50,
+    marginLeft: 20,
   },
-  image: {
-    width: 80,
-    height: 70,
-    resizeMode: "contain",
-    marginBottom: 5,
+  container: {
+    backgroundColor: "#e0c68e",
+    padding: 16,
+    flexGrow: 1,
   },
-  paymentText: {
-    color: "#4D2600",
-    fontWeight: "bold",
+  button: {
+    alignSelf: "flex-start",
+    marginBottom: 10,
+  },
+  table: {
+    backgroundColor: "#f8b75d",
+    borderRadius: 8,
+    padding: 5,
+  },
+  row: {
+    flexDirection: "row",
+    borderBottomWidth: 1,
+    borderColor: "#e4a548",
+    paddingVertical: 6,
+  },
+  header: {
+    backgroundColor: "#ffc971",
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8,
+  },
+  footer: {
+    backgroundColor: "#fcdca5",
+    borderBottomLeftRadius: 8,
+    borderBottomRightRadius: 8,
+  },
+  cell: {
+    flex: 1,
+    fontSize: 13,
     textAlign: "center",
-    fontSize: 12,
+    color: "#5b2d00",
   },
-  registerButton: {
-    backgroundColor: "#4D2600",
-    paddingVertical: 12,
-    borderRadius: 25,
-    alignItems: "center",
-    marginTop: 10,
-    marginHorizontal: 60,
-  },
-  buttonText: {
-    fontSize: 18,
-    color: "#FFFFFF",
+  bold: {
     fontWeight: "bold",
+    color: "#a10000",
   },
 });
-
-export default DonationScreen;

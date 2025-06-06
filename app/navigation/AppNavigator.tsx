@@ -20,15 +20,13 @@ import LogoutScreen from "../screens/LogoutScreen";
 import NotificationDetailsScreen from "../screens/NotificationDetailsScreen";
 import NewsDetailScreen from "../screens/NewsDetailsScreen";
 import NewsScreen from "../screens/NewsScreen";
-import PronamiScreen from "../screens/PronamiScreen";
-import AddPronamiScreen from "../screens/AddPronamiScreen";
+import AddDonationScreen from "../screens/AddDonationScreen";
 import DevoteeScreen from "../screens/DevoteeScreen";
 import DevoteeDetailScreen from "../screens/DevoteeDetailScreen";
 import ForgetPasswordScreen from "../screens/ForgetPasswordScreen";
 import ResetPasswordScreen from "../screens/ResetPasswordScreen";
 import NotificationProvider from "../screens/Notification-Provider";
 import EditDevoteeScreen from "../screens/EditDevoteeScreen";
-import PaymentDetailsScreen from "../screens/PaymentDetailsScreen";
 import ProfileDropdownMenu from "../screens/ProfileDropdownMenu ";
 
 const Stack = createStackNavigator();
@@ -129,17 +127,17 @@ const NotificationStackNavigator = () => (
   </Stack.Navigator>
 );
 
-const DonationStackNavigator = () => (
-  <Stack.Navigator screenOptions={defaultStackOptions}>
+const DonationStackNavigator = ({ navigation }) => (
+  <Stack.Navigator>
     <Stack.Screen
-      name="Donation"
+      name="AllDonations"
       component={DonationScreen}
-      options={{ title: "Donation" }}
+      options={{ title: "All Donations" }}
     />
     <Stack.Screen
-      name="DonationDetail"
-      component={PaymentDetailsScreen}
-      options={{ title: "Payment Details" }}
+      name="AddDonation"
+      component={AddDonationScreen}
+      options={{ headerShown: false }}
     />
   </Stack.Navigator>
 );
