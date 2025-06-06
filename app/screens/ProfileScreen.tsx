@@ -72,7 +72,11 @@ const MemberRegistrationForm = ({ navigation }) => {
           Authorization: `Bearer ${token}`,
         },
       });
-      console.log(response.data);
+      if (response.data.photo) {
+        setImage({
+          uri: `http://192.168.0.148:8000/images/users/${response.data.photo}`,
+        });
+      }
       setUser(response.data);
     } catch (error) {
       console.error(
